@@ -1,0 +1,12 @@
+{
+  "name": "hackfires-panel",
+  "main": "worker.js",
+  "compatibility_date": "2026-07-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    // Override this in the Cloudflare dashboard (Settings > Variables) —
+    // don't commit your real UUID here. Generate one with:
+    // node -e "console.log(crypto.randomUUID())"
+    "USER_ID": "00000000-0000-0000-0000-000000000000"
+  }
+}
