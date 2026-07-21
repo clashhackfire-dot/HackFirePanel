@@ -11,6 +11,7 @@
   :root {
     --bg: #05070c;
     --bg-card: rgba(15, 22, 34, 0.65);
+    --bg-elev: rgba(22, 30, 44, 0.85);
     --sky: #38bdf8;
     --sky-deep: #0ea5e9;
     --sky-pale: #7dd3fc;
@@ -19,136 +20,130 @@
     --border: rgba(56, 189, 248, 0.18);
     --danger: #f87171;
     --good: #4ade80;
+    --warn: #fbbf24;
   }
-
   * { box-sizing: border-box; }
-
   body {
     font-family: 'Inter', system-ui, sans-serif;
-    max-width: 560px;
-    margin: 0 auto;
-    padding: 32px 16px 80px;
-    background: var(--bg);
-    color: var(--text);
-    position: relative;
-    overflow-x: hidden;
-    min-height: 100vh;
+    max-width: 560px; margin: 0 auto; padding: 28px 16px 90px;
+    background: var(--bg); color: var(--text); position: relative;
+    overflow-x: hidden; min-height: 100vh;
   }
-
   body::before, body::after {
-    content: '';
-    position: fixed;
-    width: 60vmax;
-    height: 60vmax;
-    border-radius: 50%;
-    filter: blur(100px);
-    opacity: 0.14;
-    z-index: -2;
-    pointer-events: none;
+    content: ''; position: fixed; width: 60vmax; height: 60vmax; border-radius: 50%;
+    filter: blur(100px); opacity: 0.14; z-index: -2; pointer-events: none;
   }
   body::before { top: -22vmax; left: -22vmax; background: radial-gradient(circle, var(--sky), transparent 70%); }
   body::after { bottom: -26vmax; right: -22vmax; background: radial-gradient(circle, var(--sky-deep), transparent 70%); }
 
   #particles { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
-  .particle {
-    position: absolute; border-radius: 50%; background: var(--sky-pale);
-    box-shadow: 0 0 8px 2px rgba(125, 211, 252, 0.5);
-    animation: drift ease-in-out infinite;
-  }
-  @keyframes drift {
-    0%   { transform: translate(0, 0); opacity: 0; }
-    15%  { opacity: 0.6; }
-    50%  { transform: translate(var(--driftx, 12px), var(--drifty, -40px)); opacity: 0.8; }
-    85%  { opacity: 0.3; }
-    100% { transform: translate(0, -90px); opacity: 0; }
-  }
+  .particle { position: absolute; border-radius: 50%; background: var(--sky-pale); box-shadow: 0 0 8px 2px rgba(125,211,252,0.5); animation: drift ease-in-out infinite; }
+  @keyframes drift { 0% { transform: translate(0,0); opacity: 0; } 15% { opacity: 0.6; } 50% { transform: translate(var(--driftx,12px), var(--drifty,-40px)); opacity: 0.8; } 85% { opacity: 0.3; } 100% { transform: translate(0,-90px); opacity: 0; } }
 
-  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
-  .brand { display: inline-flex; align-items: center; gap: 10px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.25rem; }
-  .orb {
-    width: 12px; height: 12px; border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, #fff, var(--sky) 40%, var(--sky-deep) 80%);
-    box-shadow: 0 0 12px 3px rgba(56, 189, 248, 0.55);
-    animation: breathe 3.6s ease-in-out infinite;
-    flex-shrink: 0;
-  }
-  @keyframes breathe {
-    0%, 100% { transform: scale(1); box-shadow: 0 0 12px 3px rgba(56,189,248,0.45); }
-    50% { transform: scale(1.25); box-shadow: 0 0 18px 5px rgba(56,189,248,0.7); }
-  }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.2rem; }
+  .orb { width: 12px; height: 12px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff, var(--sky) 40%, var(--sky-deep) 80%); box-shadow: 0 0 12px 3px rgba(56,189,248,0.55); animation: breathe 3.6s ease-in-out infinite; flex-shrink: 0; }
+  @keyframes breathe { 0%,100% { transform: scale(1); box-shadow: 0 0 12px 3px rgba(56,189,248,0.45); } 50% { transform: scale(1.25); box-shadow: 0 0 18px 5px rgba(56,189,248,0.7); } }
   .brand-text { background: linear-gradient(90deg, var(--sky-pale), var(--sky), var(--sky-deep)); -webkit-background-clip: text; background-clip: text; color: transparent; background-size: 200% auto; animation: shimmer 7s ease-in-out infinite; }
-  @keyframes shimmer { 0%, 100% { background-position: 0% center; } 50% { background-position: 100% center; } }
+  @keyframes shimmer { 0%,100% { background-position: 0% center; } 50% { background-position: 100% center; } }
 
-  .status-pill {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;
-    color: var(--good); background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.3);
-    padding: 5px 10px; border-radius: 999px;
-  }
+  .status-pill { display: inline-flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--good); background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.3); padding: 5px 10px; border-radius: 999px; }
   .status-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--good); animation: breathe 2s ease-in-out infinite; }
 
-  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 22px; }
-  .stat {
-    background: var(--bg-card); backdrop-filter: blur(14px); border: 1px solid var(--border);
-    border-radius: 14px; padding: 14px 10px; text-align: center;
-  }
-  .stat .num { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.3rem; color: var(--sky-pale); }
-  .stat .label { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+  /* tabs */
+  .tabs { display: flex; gap: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 12px; padding: 4px; margin-bottom: 20px; }
+  .tab { flex: 1; text-align: center; padding: 8px 4px; border-radius: 9px; font-size: 0.82rem; font-weight: 600; color: var(--muted); cursor: pointer; transition: color 0.2s, background 0.2s; user-select: none; }
+  .tab.active { color: #04121c; background: linear-gradient(90deg, var(--sky), var(--sky-deep)); }
+  .panel { display: none; animation: fadein 0.35s ease; }
+  .panel.active { display: block; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-  .card {
-    background: var(--bg-card); backdrop-filter: blur(14px); border: 1px solid var(--border);
-    border-radius: 16px; padding: 18px; margin-bottom: 18px; box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-  }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 18px; }
+  .stat { background: var(--bg-card); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 14px; padding: 12px 6px; text-align: center; }
+  .stat .num { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--sky-pale); }
+  .stat .label { font-size: 0.62rem; color: var(--muted); margin-top: 2px; }
+
+  .card { background: var(--bg-card); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 16px; padding: 18px; margin-bottom: 18px; box-shadow: 0 8px 30px rgba(0,0,0,0.4); }
   .card h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1rem; margin: 0 0 14px; display: flex; justify-content: space-between; align-items: center; }
+  .card h2 span.muted-title { font-family: 'Inter'; font-size: 0.72rem; color: var(--muted); font-weight: 500; }
 
-  .add-btn {
-    background: linear-gradient(90deg, var(--sky-deep), var(--sky)); color: #04121c;
-    border: none; padding: 7px 12px; border-radius: 8px; font-size: 0.78rem; font-weight: 600;
-    cursor: pointer; font-family: 'Inter', sans-serif;
-  }
+  /* chart */
+  .chart { display: flex; align-items: flex-end; gap: 6px; height: 90px; margin-bottom: 6px; }
+  .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+  .bar { width: 100%; border-radius: 5px 5px 2px 2px; background: linear-gradient(180deg, var(--sky-pale), var(--sky-deep)); transition: transform 0.2s; }
+  .bar-col:hover .bar { transform: scaleY(1.03); filter: brightness(1.15); }
+  .bar-day { font-size: 0.62rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
 
-  .user-row {
-    display: flex; align-items: center; gap: 12px;
-    padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+  .add-btn, .primary-btn { background: linear-gradient(90deg, var(--sky-deep), var(--sky)); color: #04121c; border: none; padding: 8px 14px; border-radius: 9px; font-size: 0.78rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
+
+  .search-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .search-row input { flex: 1; }
+  input[type=text], input[type=number], select {
+    padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(0,0,0,0.35); color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;
   }
+  input:focus, select:focus { outline: none; border-color: var(--sky); box-shadow: 0 0 0 3px rgba(56,189,248,0.18); }
+
+  .chips { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .chip { font-size: 0.72rem; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); cursor: pointer; font-family: 'JetBrains Mono', monospace; }
+  .chip.active { color: #04121c; background: var(--sky); border-color: var(--sky); }
+
+  .user-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
   .user-row:last-child { border-bottom: none; }
-  .avatar {
-    width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
-    background: linear-gradient(135deg, var(--sky), var(--sky-deep));
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: #04121c; font-size: 0.9rem;
-  }
+  .avatar { width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0; background: linear-gradient(135deg, var(--sky), var(--sky-deep)); display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: #04121c; font-size: 0.85rem; }
   .user-info { flex: 1; min-width: 0; }
-  .user-name { font-size: 0.9rem; font-weight: 600; }
-  .user-meta { font-size: 0.72rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
+  .user-name-row { display: flex; align-items: center; gap: 6px; }
+  .user-name { font-size: 0.88rem; font-weight: 600; }
+  .proto-badge { font-size: 0.6rem; font-family: 'JetBrains Mono', monospace; padding: 1px 6px; border-radius: 5px; border: 1px solid var(--border); color: var(--sky-pale); }
+  .user-meta { font-size: 0.7rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
   .quota-bar { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.08); margin-top: 6px; overflow: hidden; }
   .quota-fill { height: 100%; background: linear-gradient(90deg, var(--sky), var(--sky-deep)); border-radius: 2px; }
+  .quota-fill.warn { background: linear-gradient(90deg, var(--warn), #f97316); }
 
-  .toggle {
-    width: 36px; height: 20px; border-radius: 999px; background: rgba(255,255,255,0.12);
-    position: relative; cursor: pointer; border: none; flex-shrink: 0; transition: background 0.25s;
-  }
-  .toggle::after {
-    content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%;
-    background: #cbd5e1; transition: transform 0.25s, background 0.25s;
-  }
+  .toggle { width: 34px; height: 19px; border-radius: 999px; background: rgba(255,255,255,0.12); position: relative; cursor: pointer; border: none; flex-shrink: 0; transition: background 0.25s; }
+  .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 15px; height: 15px; border-radius: 50%; background: #cbd5e1; transition: transform 0.25s, background 0.25s; }
   .toggle.on { background: rgba(56,189,248,0.35); }
-  .toggle.on::after { transform: translateX(16px); background: var(--sky-pale); }
+  .toggle.on::after { transform: translateX(15px); background: var(--sky-pale); }
 
-  .icon-btn {
-    width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--border);
-    background: rgba(255,255,255,0.03); color: var(--muted); font-size: 0.85rem;
-    cursor: pointer; flex-shrink: 0;
-  }
+  .icon-btn { width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: var(--muted); font-size: 0.8rem; cursor: pointer; flex-shrink: 0; position: relative; }
   .icon-btn:hover { color: var(--sky-pale); border-color: rgba(56,189,248,0.4); }
+
+  .menu { position: absolute; right: 0; top: 34px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 10px; padding: 6px; min-width: 140px; z-index: 20; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none; }
+  .menu.open { display: block; }
+  .menu button { width: 100%; text-align: left; background: none; border: none; color: var(--text); font-size: 0.78rem; padding: 8px 10px; border-radius: 7px; cursor: pointer; box-shadow: none; }
+  .menu button:hover { background: rgba(56,189,248,0.1); }
+  .menu button.danger { color: var(--danger); }
 
   .empty { text-align: center; color: var(--muted); font-size: 0.85rem; padding: 18px 0; }
 
-  footer { text-align: center; color: var(--muted); font-size: 0.7rem; margin-top: 30px; font-family: 'JetBrains Mono', monospace; line-height: 1.6; }
+  .setting-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .setting-row:last-child { border-bottom: none; }
+  .setting-label { font-size: 0.85rem; }
+  .setting-desc { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
 
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation: none !important; transition: none !important; }
-  }
+  .danger-zone { border-color: rgba(248,113,113,0.3); }
+  .danger-btn { background: rgba(248,113,113,0.12); color: var(--danger); border: 1px solid rgba(248,113,113,0.4); padding: 9px 14px; border-radius: 9px; font-size: 0.82rem; font-weight: 600; cursor: pointer; width: 100%; }
+
+  /* modal */
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); z-index: 30; display: none; align-items: flex-end; justify-content: center; }
+  .overlay.open { display: flex; }
+  .sheet { background: var(--bg-elev); border: 1px solid var(--border); border-radius: 20px 20px 0 0; padding: 22px 18px 28px; width: 100%; max-width: 560px; transform: translateY(100%); transition: transform 0.3s ease; }
+  .overlay.open .sheet { transform: translateY(0); }
+  .sheet h3 { font-family: 'Space Grotesk', sans-serif; margin: 0 0 16px; }
+  .field { margin-bottom: 12px; }
+  .field label { display: block; font-size: 0.75rem; color: var(--muted); margin-bottom: 5px; }
+  .field input, .field select { width: 100%; }
+  .sheet-actions { display: flex; gap: 8px; margin-top: 16px; }
+  .sheet-actions button { flex: 1; }
+  .ghost-btn { background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border); padding: 10px; border-radius: 9px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+
+  /* toast */
+  #toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(20px); background: var(--bg-elev); border: 1px solid rgba(56,189,248,0.4); color: var(--sky-pale); padding: 10px 18px; border-radius: 999px; font-size: 0.8rem; opacity: 0; transition: opacity 0.25s, transform 0.25s; z-index: 40; font-family: 'JetBrains Mono', monospace; }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  footer { text-align: center; color: var(--muted); font-size: 0.68rem; margin-top: 24px; font-family: 'JetBrains Mono', monospace; line-height: 1.6; }
+
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
 </head>
 <body>
@@ -159,16 +154,90 @@
     <span class="status-pill">online</span>
   </header>
 
-  <div class="stats">
-    <div class="stat"><div class="num" id="statUsers">–</div><div class="label">Active users</div></div>
-    <div class="stat"><div class="num" id="statTraffic">–</div><div class="label">Traffic today</div></div>
-    <div class="stat"><div class="num" id="statUptime">–</div><div class="label">Uptime</div></div>
+  <div class="tabs">
+    <div class="tab active" data-tab="overview">Overview</div>
+    <div class="tab" data-tab="users">Users</div>
+    <div class="tab" data-tab="settings">Settings</div>
   </div>
 
-  <div class="card">
-    <h2>Users <button class="add-btn" id="addUserBtn">+ Add</button></h2>
-    <div id="userList"></div>
+  <!-- OVERVIEW -->
+  <div class="panel active" id="panel-overview">
+    <div class="stats">
+      <div class="stat"><div class="num" id="statUsers">–</div><div class="label">Active</div></div>
+      <div class="stat"><div class="num" id="statTraffic">–</div><div class="label">Today</div></div>
+      <div class="stat"><div class="num" id="statUptime">–</div><div class="label">Uptime</div></div>
+      <div class="stat"><div class="num" id="statNodes">–</div><div class="label">Nodes</div></div>
+    </div>
+
+    <div class="card">
+      <h2>Weekly traffic <span class="muted-title">GB / day</span></h2>
+      <div class="chart" id="chart"></div>
+    </div>
+
+    <div class="card">
+      <h2>Recent activity</h2>
+      <div id="activityList"></div>
+    </div>
   </div>
+
+  <!-- USERS -->
+  <div class="panel" id="panel-users">
+    <div class="card">
+      <h2>Users <button class="add-btn" id="addUserBtn">+ Add</button></h2>
+      <div class="search-row">
+        <input type="text" id="searchInput" placeholder="Search users..." />
+      </div>
+      <div class="chips" id="protoChips">
+        <div class="chip active" data-proto="all">All</div>
+        <div class="chip" data-proto="VLESS">VLESS</div>
+        <div class="chip" data-proto="Trojan">Trojan</div>
+        <div class="chip" data-proto="SS">Shadowsocks</div>
+      </div>
+      <div id="userList"></div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="panel" id="panel-settings">
+    <div class="card">
+      <h2>Panel info</h2>
+      <div class="setting-row"><div><div class="setting-label">Worker</div><div class="setting-desc">hackfires-panel</div></div><span class="status-pill">running</span></div>
+      <div class="setting-row"><div><div class="setting-label">Region</div><div class="setting-desc">Cloudflare edge (auto)</div></div></div>
+      <div class="setting-row"><div><div class="setting-label">Version</div><div class="setting-desc">v0.3.0-dev</div></div></div>
+    </div>
+
+    <div class="card">
+      <h2>Network</h2>
+      <div class="setting-row"><div><div class="setting-label">Clean-IP auto-optimize</div><div class="setting-desc">Pick the best IP per ISP</div></div><button class="toggle on" id="toggleCleanIp"></button></div>
+      <div class="setting-row"><div><div class="setting-label">WARP integration</div><div class="setting-desc">Route through Cloudflare WARP</div></div><button class="toggle" id="toggleWarp"></button></div>
+      <div class="setting-row"><div><div class="setting-label">ECH + TLS fragmentation</div><div class="setting-desc">Extra DPI resistance</div></div><button class="toggle on" id="toggleEch"></button></div>
+    </div>
+
+    <div class="card danger-zone">
+      <h2>Danger zone</h2>
+      <p class="setting-desc" style="margin-bottom:12px">Revoke all subscription links and force everyone to reconnect.</p>
+      <button class="danger-btn" id="killSwitch">Kill switch — pause all users</button>
+    </div>
+  </div>
+
+  <!-- Add user sheet -->
+  <div class="overlay" id="overlay">
+    <div class="sheet">
+      <h3>Add user</h3>
+      <div class="field"><label>Label</label><input type="text" id="newName" placeholder="guest-2" /></div>
+      <div class="field"><label>Protocol</label>
+        <select id="newProto"><option>VLESS</option><option>Trojan</option><option>SS</option></select>
+      </div>
+      <div class="field"><label>Quota (GB)</label><input type="number" id="newQuota" value="10" /></div>
+      <div class="field"><label>Expires in (days)</label><input type="number" id="newExpiry" value="30" /></div>
+      <div class="sheet-actions">
+        <button class="ghost-btn" id="cancelAdd">Cancel</button>
+        <button class="primary-btn" id="confirmAdd">Add user</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
 
   <footer>
     Live data requires the KV-backed users API on the main worker.<br>
@@ -176,16 +245,15 @@
   </footer>
 
   <script>
+    // ambient particles
     const particleField = document.getElementById('particles');
     const particleCount = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 14;
     for (let i = 0; i < particleCount; i++) {
       const el = document.createElement('div');
       el.className = 'particle';
       const size = 2 + Math.random() * 3;
-      el.style.width = size + 'px';
-      el.style.height = size + 'px';
-      el.style.left = Math.random() * 100 + 'vw';
-      el.style.top = Math.random() * 100 + 'vh';
+      el.style.width = size + 'px'; el.style.height = size + 'px';
+      el.style.left = Math.random() * 100 + 'vw'; el.style.top = Math.random() * 100 + 'vh';
       el.style.setProperty('--driftx', (Math.random() * 40 - 20) + 'px');
       el.style.setProperty('--drifty', (Math.random() * -60 - 20) + 'px');
       el.style.animationDuration = (10 + Math.random() * 10) + 's';
@@ -193,66 +261,187 @@
       particleField.appendChild(el);
     }
 
-    // Placeholder data — replace with a fetch() to your worker's users API
-    // once the KV-backed multi-user endpoints exist.
-    const placeholderUsers = [
-      { name: 'primary', uuid: '4e1c...9af2', usedGB: 3.2, quotaGB: 10, active: true },
-      { name: 'guest-1', uuid: '9b7a...11d0', usedGB: 8.7, quotaGB: 10, active: true },
-      { name: 'backup', uuid: '2f44...7c3e', usedGB: 0.4, quotaGB: 5, active: false },
-    ];
+    // tabs
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+      });
+    });
 
-    document.getElementById('statUsers').textContent = placeholderUsers.filter(u => u.active).length;
-    document.getElementById('statTraffic').textContent =
-      placeholderUsers.reduce((s, u) => s + u.usedGB, 0).toFixed(1) + ' GB';
-    document.getElementById('statUptime').textContent = '99.9%';
+    // toast
+    const toastEl = document.getElementById('toast');
+    function toast(msg) {
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      clearTimeout(toastEl._t);
+      toastEl._t = setTimeout(() => toastEl.classList.remove('show'), 1800);
+    }
+
+    // --- placeholder data — replace with fetch() to the worker's users API ---
+    let users = [
+      { name: 'primary', uuid: '4e1c9a8f-...', proto: 'VLESS', usedGB: 3.2, quotaGB: 10, active: true, expiresDays: 28 },
+      { name: 'guest-1', uuid: '9b7a1102-...', proto: 'Trojan', usedGB: 8.7, quotaGB: 10, active: true, expiresDays: 4 },
+      { name: 'backup', uuid: '2f447c3e-...', proto: 'SS', usedGB: 0.4, quotaGB: 5, active: false, expiresDays: 60 },
+    ];
+    let protoFilter = 'all';
+    let searchTerm = '';
+
+    function refreshOverview() {
+      document.getElementById('statUsers').textContent = users.filter(u => u.active).length;
+      document.getElementById('statTraffic').textContent = users.reduce((s,u) => s+u.usedGB, 0).toFixed(1) + ' GB';
+      document.getElementById('statUptime').textContent = '99.9%';
+      document.getElementById('statNodes').textContent = '3';
+    }
+
+    function renderChart() {
+      const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+      const values = [4.2, 6.8, 5.1, 9.3, 7.6, 3.4, 5.9];
+      const max = Math.max(...values);
+      const chart = document.getElementById('chart');
+      chart.innerHTML = '';
+      days.forEach((d, i) => {
+        const col = document.createElement('div');
+        col.className = 'bar-col';
+        col.innerHTML = `<div class="bar" style="height:${(values[i]/max*100).toFixed(0)}%" title="${values[i]} GB"></div><div class="bar-day">${d}</div>`;
+        chart.appendChild(col);
+      });
+    }
+
+    function renderActivity() {
+      const items = [
+        ['guest-1 connected', '2m ago'],
+        ['primary hit 80% quota', '1h ago'],
+        ['backup access disabled', '6h ago'],
+      ];
+      document.getElementById('activityList').innerHTML = items.map(([t, time]) =>
+        `<div class="user-row"><div class="user-info"><div class="user-name" style="font-weight:500">${t}</div></div><div class="user-meta">${time}</div></div>`
+      ).join('');
+    }
 
     const userList = document.getElementById('userList');
-
-    function render() {
+    function renderUsers() {
+      const filtered = users.filter(u =>
+        (protoFilter === 'all' || u.proto === protoFilter) &&
+        u.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
       userList.innerHTML = '';
-      if (!placeholderUsers.length) {
-        userList.innerHTML = '<div class="empty">No users yet — add one to get started.</div>';
+      if (!filtered.length) {
+        userList.innerHTML = '<div class="empty">No users match.</div>';
         return;
       }
-      placeholderUsers.forEach((u, i) => {
+      filtered.forEach((u) => {
+        const i = users.indexOf(u);
         const pct = Math.min(100, (u.usedGB / u.quotaGB) * 100);
+        const warn = pct > 80;
         const row = document.createElement('div');
         row.className = 'user-row';
         row.innerHTML = `
           <div class="avatar">${u.name.slice(0,2).toUpperCase()}</div>
           <div class="user-info">
-            <div class="user-name">${u.name}</div>
-            <div class="user-meta">${u.uuid} · ${u.usedGB}/${u.quotaGB} GB</div>
-            <div class="quota-bar"><div class="quota-fill" style="width:${pct}%"></div></div>
+            <div class="user-name-row"><span class="user-name">${u.name}</span><span class="proto-badge">${u.proto}</span></div>
+            <div class="user-meta">${u.usedGB}/${u.quotaGB} GB · expires in ${u.expiresDays}d</div>
+            <div class="quota-bar"><div class="quota-fill ${warn ? 'warn' : ''}" style="width:${pct}%"></div></div>
           </div>
-          <button class="toggle ${u.active ? 'on' : ''}" data-i="${i}" title="Toggle access"></button>
-          <button class="icon-btn" data-copy="${i}" title="Copy subscription link">⧉</button>
+          <button class="toggle ${u.active ? 'on' : ''}" data-i="${i}"></button>
+          <button class="icon-btn" data-menu="${i}">⋮
+            <div class="menu" data-menu-panel="${i}">
+              <button data-copy="${i}">Copy link</button>
+              <button data-qr="${i}">Show QR</button>
+              <button data-edit="${i}">Edit quota</button>
+              <button class="danger" data-del="${i}">Delete</button>
+            </div>
+          </button>
         `;
         userList.appendChild(row);
       });
     }
-    render();
+
+    function render() { refreshOverview(); renderUsers(); }
+
+    document.getElementById('searchInput').addEventListener('input', (e) => { searchTerm = e.target.value; renderUsers(); });
+    document.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        protoFilter = chip.dataset.proto;
+        renderUsers();
+      });
+    });
 
     userList.addEventListener('click', (e) => {
-      if (e.target.classList.contains('toggle')) {
-        const i = +e.target.dataset.i;
-        placeholderUsers[i].active = !placeholderUsers[i].active;
+      const t = e.target;
+      if (t.classList.contains('toggle')) {
+        users[+t.dataset.i].active = !users[+t.dataset.i].active;
         render();
+        return;
       }
-      if (e.target.dataset.copy !== undefined) {
-        const u = placeholderUsers[+e.target.dataset.copy];
-        navigator.clipboard.writeText(`vless://${u.uuid}@example.workers.dev:443?encryption=none&security=tls&type=ws#${u.name}`);
-        e.target.textContent = '✓';
-        setTimeout(() => { e.target.textContent = '⧉'; }, 1200);
+      if (t.dataset.menu !== undefined) {
+        document.querySelectorAll('.menu').forEach(m => { if (m.dataset.menuPanel !== t.dataset.menu) m.classList.remove('open'); });
+        const menu = t.querySelector('.menu');
+        menu.classList.toggle('open');
+        return;
+      }
+      if (t.dataset.copy !== undefined) {
+        const u = users[+t.dataset.copy];
+        navigator.clipboard.writeText(`${u.proto.toLowerCase()}://${u.uuid}@example.workers.dev:443?encryption=none&security=tls&type=ws#${u.name}`);
+        toast('Link copied');
+      }
+      if (t.dataset.qr !== undefined) { toast('QR preview — wire up after real links exist'); }
+      if (t.dataset.edit !== undefined) {
+        const u = users[+t.dataset.edit];
+        const val = prompt(`New quota (GB) for ${u.name}:`, u.quotaGB);
+        if (val && !isNaN(+val)) { u.quotaGB = +val; render(); toast('Quota updated'); }
+      }
+      if (t.dataset.del !== undefined) {
+        const u = users[+t.dataset.del];
+        if (confirm(`Delete ${u.name}?`)) { users.splice(+t.dataset.del, 1); render(); toast('User deleted'); }
+      }
+    });
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.icon-btn')) document.querySelectorAll('.menu').forEach(m => m.classList.remove('open'));
+    });
+
+    // add user sheet
+    const overlay = document.getElementById('overlay');
+    document.getElementById('addUserBtn').addEventListener('click', () => overlay.classList.add('open'));
+    document.getElementById('cancelAdd').addEventListener('click', () => overlay.classList.remove('open'));
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('open'); });
+    document.getElementById('confirmAdd').addEventListener('click', () => {
+      const name = document.getElementById('newName').value.trim();
+      if (!name) { toast('Enter a label first'); return; }
+      users.push({
+        name,
+        uuid: crypto.randomUUID(),
+        proto: document.getElementById('newProto').value,
+        usedGB: 0,
+        quotaGB: +document.getElementById('newQuota').value || 10,
+        active: true,
+        expiresDays: +document.getElementById('newExpiry').value || 30,
+      });
+      overlay.classList.remove('open');
+      document.getElementById('newName').value = '';
+      render();
+      toast('User added');
+    });
+
+    // settings toggles
+    ['toggleCleanIp','toggleWarp','toggleEch'].forEach(id => {
+      document.getElementById(id).addEventListener('click', (e) => e.target.classList.toggle('on'));
+    });
+    document.getElementById('killSwitch').addEventListener('click', () => {
+      if (confirm('Pause access for every user immediately?')) {
+        users.forEach(u => u.active = false);
+        render();
+        toast('All users paused');
       }
     });
 
-    document.getElementById('addUserBtn').addEventListener('click', () => {
-      const name = prompt('User label (e.g. "guest-2"):');
-      if (!name) return;
-      placeholderUsers.push({ name, uuid: crypto.randomUUID().slice(0,4)+'...'+crypto.randomUUID().slice(0,4), usedGB: 0, quotaGB: 10, active: true });
-      render();
-    });
+    renderChart();
+    renderActivity();
+    render();
   </script>
 </body>
 </html>
