@@ -9,15 +9,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #07080d;
-    --bg-card: rgba(20, 22, 30, 0.72);
-    --fire: #ff5e3a;
-    --ember: #ffb347;
-    --cyan: #21e6c1;
-    --spark: #ff2e88;
-    --text: #f5f0e8;
-    --muted: #9aa0ac;
-    --border: rgba(255, 148, 90, 0.18);
+    --bg: #05070c;
+    --bg-card: rgba(15, 22, 34, 0.65);
+    --sky: #38bdf8;
+    --sky-deep: #0ea5e9;
+    --sky-pale: #7dd3fc;
+    --text: #eaf3fb;
+    --muted: #8695a8;
+    --border: rgba(56, 189, 248, 0.18);
   }
 
   * { box-sizing: border-box; }
@@ -34,42 +33,41 @@
     min-height: 100vh;
   }
 
-  /* ambient glow blobs */
+  /* calm ambient glow */
   body::before, body::after {
     content: '';
     position: fixed;
     width: 60vmax;
     height: 60vmax;
     border-radius: 50%;
-    filter: blur(90px);
-    opacity: 0.22;
+    filter: blur(100px);
+    opacity: 0.16;
     z-index: -2;
     pointer-events: none;
   }
-  body::before { top: -20vmax; left: -20vmax; background: radial-gradient(circle, var(--fire), transparent 70%); }
-  body::after { bottom: -25vmax; right: -20vmax; background: radial-gradient(circle, var(--cyan), transparent 70%); }
+  body::before { top: -22vmax; left: -22vmax; background: radial-gradient(circle, var(--sky), transparent 70%); }
+  body::after { bottom: -26vmax; right: -22vmax; background: radial-gradient(circle, var(--sky-deep), transparent 70%); }
 
-  #embers {
+  #particles {
     position: fixed;
     inset: 0;
     z-index: -1;
     pointer-events: none;
     overflow: hidden;
   }
-  .ember {
+  .particle {
     position: absolute;
-    bottom: -5%;
-    width: 4px;
-    height: 4px;
     border-radius: 50%;
-    background: var(--ember);
-    box-shadow: 0 0 6px 2px var(--fire);
-    animation: rise linear infinite;
+    background: var(--sky-pale);
+    box-shadow: 0 0 8px 2px rgba(125, 211, 252, 0.5);
+    animation: drift ease-in-out infinite;
   }
-  @keyframes rise {
-    0%   { transform: translateY(0) translateX(0); opacity: 0; }
-    8%   { opacity: 1; }
-    100% { transform: translateY(-110vh) translateX(var(--drift, 20px)); opacity: 0; }
+  @keyframes drift {
+    0%   { transform: translate(0, 0); opacity: 0; }
+    15%  { opacity: 0.7; }
+    50%  { transform: translate(var(--driftx, 12px), var(--drifty, -40px)); opacity: 0.9; }
+    85%  { opacity: 0.4; }
+    100% { transform: translate(0, -90px); opacity: 0; }
   }
 
   header {
@@ -79,28 +77,38 @@
   .brand {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     font-family: 'Space Grotesk', sans-serif;
     font-weight: 700;
     font-size: 1.7rem;
     letter-spacing: -0.02em;
-    background: linear-gradient(90deg, var(--fire), var(--ember) 45%, var(--spark));
+    color: var(--text);
+  }
+  .orb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fff, var(--sky) 40%, var(--sky-deep) 80%);
+    box-shadow: 0 0 12px 3px rgba(56, 189, 248, 0.55);
+    animation: breathe 3.6s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 12px 3px rgba(56, 189, 248, 0.45); }
+    50%      { transform: scale(1.25); box-shadow: 0 0 18px 5px rgba(56, 189, 248, 0.7); }
+  }
+  .brand-text {
+    background: linear-gradient(90deg, var(--sky-pale), var(--sky), var(--sky-deep));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     background-size: 200% auto;
-    animation: shimmer 5s ease-in-out infinite;
+    animation: shimmer 7s ease-in-out infinite;
   }
   @keyframes shimmer {
     0%, 100% { background-position: 0% center; }
     50% { background-position: 100% center; }
   }
-  .flame { font-size: 1.5rem; filter: drop-shadow(0 0 8px var(--fire)); animation: flicker 2.2s ease-in-out infinite; }
-  @keyframes flicker {
-    0%, 100% { transform: scale(1) rotate(-2deg); }
-    50% { transform: scale(1.08) rotate(2deg); }
-  }
-  .tagline { color: var(--muted); font-size: 0.85rem; margin-top: 6px; font-family: 'JetBrains Mono', monospace; }
+  .tagline { color: var(--muted); font-size: 0.85rem; margin-top: 8px; font-family: 'JetBrains Mono', monospace; }
 
   .rail {
     position: relative;
@@ -113,8 +121,8 @@
     top: 14px;
     bottom: 14px;
     width: 2px;
-    background: linear-gradient(var(--fire), var(--cyan));
-    opacity: 0.35;
+    background: linear-gradient(var(--sky), var(--sky-deep));
+    opacity: 0.3;
   }
 
   .step {
@@ -125,10 +133,10 @@
     border-radius: 16px;
     padding: 20px;
     margin-bottom: 20px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.35);
-    transition: border-color 0.3s, transform 0.3s;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    transition: border-color 0.35s, transform 0.35s;
   }
-  .step:hover { border-color: rgba(255,148,90,0.4); transform: translateY(-2px); }
+  .step:hover { border-color: rgba(56,189,248,0.4); transform: translateY(-2px); }
 
   .badge {
     position: absolute;
@@ -137,26 +145,27 @@
     width: 28px;
     height: 28px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--fire), var(--spark));
+    background: linear-gradient(135deg, var(--sky), var(--sky-deep));
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.8rem;
     font-weight: 500;
-    box-shadow: 0 0 0 4px var(--bg), 0 0 14px 2px rgba(255,94,58,0.6);
+    color: #04121c;
+    box-shadow: 0 0 0 4px var(--bg), 0 0 12px 2px rgba(56,189,248,0.5);
   }
   .badge::after {
     content: '';
     position: absolute;
     inset: -6px;
     border-radius: 50%;
-    border: 1px solid var(--fire);
-    opacity: 0.5;
-    animation: pulse-ring 2.4s ease-out infinite;
+    border: 1px solid var(--sky);
+    opacity: 0.4;
+    animation: pulse-ring 3s ease-out infinite;
   }
   @keyframes pulse-ring {
-    0% { transform: scale(0.8); opacity: 0.6; }
+    0% { transform: scale(0.8); opacity: 0.5; }
     100% { transform: scale(1.6); opacity: 0; }
   }
 
@@ -170,8 +179,8 @@
     gap: 8px;
     position: relative;
     overflow: hidden;
-    background: linear-gradient(90deg, var(--fire), var(--spark));
-    color: #fff;
+    background: linear-gradient(90deg, var(--sky-deep), var(--sky));
+    color: #04121c;
     border: none;
     padding: 12px 20px;
     border-radius: 10px;
@@ -180,7 +189,7 @@
     text-decoration: none;
     cursor: pointer;
     width: 100%;
-    box-shadow: 0 4px 20px rgba(255, 46, 136, 0.25);
+    box-shadow: 0 4px 20px rgba(56, 189, 248, 0.25);
     transition: transform 0.15s, box-shadow 0.3s;
   }
   a.btn:active, button:active { transform: scale(0.98); }
@@ -189,9 +198,9 @@
     position: absolute;
     top: 0; left: -60%;
     width: 40%; height: 100%;
-    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.35), transparent);
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
     transform: skewX(-20deg);
-    animation: shine 3s ease-in-out infinite;
+    animation: shine 4s ease-in-out infinite;
   }
   @keyframes shine {
     0% { left: -60%; }
@@ -204,7 +213,7 @@
     width: 100%;
     padding: 12px;
     border-radius: 10px;
-    border: 1px solid rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.1);
     background: rgba(0,0,0,0.35);
     color: var(--text);
     font-family: 'JetBrains Mono', monospace;
@@ -214,8 +223,8 @@
   }
   input[type=text]:focus {
     outline: none;
-    border-color: var(--cyan);
-    box-shadow: 0 0 0 3px rgba(33,230,193,0.18);
+    border-color: var(--sky);
+    box-shadow: 0 0 0 3px rgba(56,189,248,0.18);
   }
 
   #status {
@@ -223,36 +232,36 @@
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.8rem;
   }
-  #status.ok { color: var(--cyan); }
-  #status.err { color: var(--spark); }
+  #status.ok { color: var(--sky-pale); }
+  #status.err { color: #f87171; }
 
   #resultBox {
     display: none;
     opacity: 0;
     transform: translateY(8px) scale(0.98);
     transition: opacity 0.5s ease, transform 0.5s ease;
-    border-color: rgba(33,230,193,0.4);
+    border-color: rgba(56,189,248,0.4);
   }
   #resultBox.show { display: block; opacity: 1; transform: translateY(0) scale(1); }
-  #resultBox h2 { color: var(--cyan); }
+  #resultBox h2 { color: var(--sky-pale); }
 
   #result { word-break: break-all; font-size: 0.8rem; background: rgba(0,0,0,0.4); padding: 12px; border-radius: 10px; font-family: 'JetBrains Mono', monospace; line-height: 1.6; }
-  #result b { color: var(--ember); font-family: 'Inter', sans-serif; }
+  #result b { color: var(--sky-pale); font-family: 'Inter', sans-serif; }
 
   #qr {
     display: block;
     margin: 14px auto 0;
     border-radius: 12px;
-    border: 2px solid var(--cyan);
-    box-shadow: 0 0 20px rgba(33,230,193,0.35);
+    border: 2px solid var(--sky);
+    box-shadow: 0 0 20px rgba(56,189,248,0.3);
   }
 
   .copy-btn {
     margin-top: 10px;
-    background: rgba(33,230,193,0.12);
-    color: var(--cyan);
+    background: rgba(56,189,248,0.1);
+    color: var(--sky-pale);
     box-shadow: none;
-    border: 1px solid rgba(33,230,193,0.4);
+    border: 1px solid rgba(56,189,248,0.35);
   }
   .copy-btn::before { display: none; }
 
@@ -262,10 +271,10 @@
 </style>
 </head>
 <body>
-  <div id="embers"></div>
+  <div id="particles"></div>
 
   <header>
-    <div class="brand"><span class="flame">🔥</span> HackFire's Panel</div>
+    <div class="brand"><span class="orb"></span><span class="brand-text">HackFire's Panel</span></div>
     <div class="tagline">// one-click cloudflare provisioning</div>
   </header>
 
@@ -287,12 +296,12 @@
     <div class="step">
       <div class="badge">3</div>
       <h2>Install</h2>
-      <button id="installBtn">⚡ Install My Panel</button>
+      <button id="installBtn">Install My Panel</button>
       <p id="status" class="muted"></p>
     </div>
 
     <div class="step" id="resultBox">
-      <div class="badge" style="background:linear-gradient(135deg, var(--cyan), #0ea884)">✓</div>
+      <div class="badge" style="background:linear-gradient(135deg, var(--sky-pale), var(--sky-deep))">✓</div>
       <h2>Panel is live</h2>
       <div id="result"></div>
       <img id="qr" style="display:none" width="180" height="180" alt="Subscription QR code" />
@@ -304,18 +313,22 @@
     // Point this at your deployed installer-relay Worker URL.
     const RELAY_URL = 'https://YOUR-RELAY-SUBDOMAIN.workers.dev';
 
-    // ambient rising embers
-    const emberField = document.getElementById('embers');
-    const emberCount = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 22;
-    for (let i = 0; i < emberCount; i++) {
+    // calm drifting particles
+    const particleField = document.getElementById('particles');
+    const particleCount = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 16;
+    for (let i = 0; i < particleCount; i++) {
       const el = document.createElement('div');
-      el.className = 'ember';
+      el.className = 'particle';
+      const size = 2 + Math.random() * 3;
+      el.style.width = size + 'px';
+      el.style.height = size + 'px';
       el.style.left = Math.random() * 100 + 'vw';
-      el.style.setProperty('--drift', (Math.random() * 60 - 30) + 'px');
-      el.style.animationDuration = (6 + Math.random() * 8) + 's';
+      el.style.top = Math.random() * 100 + 'vh';
+      el.style.setProperty('--driftx', (Math.random() * 40 - 20) + 'px');
+      el.style.setProperty('--drifty', (Math.random() * -60 - 20) + 'px');
+      el.style.animationDuration = (10 + Math.random() * 10) + 's';
       el.style.animationDelay = (Math.random() * 10) + 's';
-      el.style.opacity = 0.4 + Math.random() * 0.6;
-      emberField.appendChild(el);
+      particleField.appendChild(el);
     }
 
     const btn = document.getElementById('installBtn');
