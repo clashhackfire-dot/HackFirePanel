@@ -3,55 +3,332 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>HackFire's Panel — One-Click Install</title>
+<title>HackFire's Panel — Install</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
-  body { font-family: system-ui, sans-serif; max-width: 480px; margin: 40px auto; padding: 0 16px; background: #0f1115; color: #eee; }
-  h1 { font-size: 1.3rem; }
-  .step { background: #1a1d24; border-radius: 10px; padding: 16px; margin-bottom: 14px; }
-  .step h2 { font-size: 1rem; margin: 0 0 8px; }
-  a.btn, button { display: inline-block; background: #f6821f; color: #fff; border: none; padding: 10px 16px; border-radius: 8px; font-size: 0.95rem; text-decoration: none; cursor: pointer; }
-  input[type=text] { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #333; background: #0f1115; color: #eee; box-sizing: border-box; margin-bottom: 10px; }
-  #result { word-break: break-all; font-size: 0.85rem; background: #0f1115; padding: 10px; border-radius: 8px; }
-  .muted { color: #999; font-size: 0.85rem; }
+  :root {
+    --bg: #07080d;
+    --bg-card: rgba(20, 22, 30, 0.72);
+    --fire: #ff5e3a;
+    --ember: #ffb347;
+    --cyan: #21e6c1;
+    --spark: #ff2e88;
+    --text: #f5f0e8;
+    --muted: #9aa0ac;
+    --border: rgba(255, 148, 90, 0.18);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 48px 18px 80px;
+    background: var(--bg);
+    color: var(--text);
+    position: relative;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ambient glow blobs */
+  body::before, body::after {
+    content: '';
+    position: fixed;
+    width: 60vmax;
+    height: 60vmax;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.22;
+    z-index: -2;
+    pointer-events: none;
+  }
+  body::before { top: -20vmax; left: -20vmax; background: radial-gradient(circle, var(--fire), transparent 70%); }
+  body::after { bottom: -25vmax; right: -20vmax; background: radial-gradient(circle, var(--cyan), transparent 70%); }
+
+  #embers {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .ember {
+    position: absolute;
+    bottom: -5%;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--ember);
+    box-shadow: 0 0 6px 2px var(--fire);
+    animation: rise linear infinite;
+  }
+  @keyframes rise {
+    0%   { transform: translateY(0) translateX(0); opacity: 0; }
+    8%   { opacity: 1; }
+    100% { transform: translateY(-110vh) translateX(var(--drift, 20px)); opacity: 0; }
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 1.7rem;
+    letter-spacing: -0.02em;
+    background: linear-gradient(90deg, var(--fire), var(--ember) 45%, var(--spark));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    background-size: 200% auto;
+    animation: shimmer 5s ease-in-out infinite;
+  }
+  @keyframes shimmer {
+    0%, 100% { background-position: 0% center; }
+    50% { background-position: 100% center; }
+  }
+  .flame { font-size: 1.5rem; filter: drop-shadow(0 0 8px var(--fire)); animation: flicker 2.2s ease-in-out infinite; }
+  @keyframes flicker {
+    0%, 100% { transform: scale(1) rotate(-2deg); }
+    50% { transform: scale(1.08) rotate(2deg); }
+  }
+  .tagline { color: var(--muted); font-size: 0.85rem; margin-top: 6px; font-family: 'JetBrains Mono', monospace; }
+
+  .rail {
+    position: relative;
+    padding-left: 34px;
+  }
+  .rail::before {
+    content: '';
+    position: absolute;
+    left: 13px;
+    top: 14px;
+    bottom: 14px;
+    width: 2px;
+    background: linear-gradient(var(--fire), var(--cyan));
+    opacity: 0.35;
+  }
+
+  .step {
+    position: relative;
+    background: var(--bg-card);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .step:hover { border-color: rgba(255,148,90,0.4); transform: translateY(-2px); }
+
+  .badge {
+    position: absolute;
+    left: -34px;
+    top: 20px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--fire), var(--spark));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 500;
+    box-shadow: 0 0 0 4px var(--bg), 0 0 14px 2px rgba(255,94,58,0.6);
+  }
+  .badge::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 1px solid var(--fire);
+    opacity: 0.5;
+    animation: pulse-ring 2.4s ease-out infinite;
+  }
+  @keyframes pulse-ring {
+    0% { transform: scale(0.8); opacity: 0.6; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+
+  h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; margin: 0 0 10px; font-weight: 700; }
+  p.muted { color: var(--muted); font-size: 0.85rem; line-height: 1.5; margin: 0 0 12px; }
+
+  a.btn, button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(90deg, var(--fire), var(--spark));
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    width: 100%;
+    box-shadow: 0 4px 20px rgba(255, 46, 136, 0.25);
+    transition: transform 0.15s, box-shadow 0.3s;
+  }
+  a.btn:active, button:active { transform: scale(0.98); }
+  a.btn::before, button::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -60%;
+    width: 40%; height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.35), transparent);
+    transform: skewX(-20deg);
+    animation: shine 3s ease-in-out infinite;
+  }
+  @keyframes shine {
+    0% { left: -60%; }
+    45%, 100% { left: 130%; }
+  }
+  button:disabled { opacity: 0.6; cursor: default; }
+  button:disabled::before { animation: none; }
+
+  input[type=text] {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(0,0,0,0.35);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  input[type=text]:focus {
+    outline: none;
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 3px rgba(33,230,193,0.18);
+  }
+
+  #status {
+    min-height: 1.2em;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+  }
+  #status.ok { color: var(--cyan); }
+  #status.err { color: var(--spark); }
+
+  #resultBox {
+    display: none;
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    border-color: rgba(33,230,193,0.4);
+  }
+  #resultBox.show { display: block; opacity: 1; transform: translateY(0) scale(1); }
+  #resultBox h2 { color: var(--cyan); }
+
+  #result { word-break: break-all; font-size: 0.8rem; background: rgba(0,0,0,0.4); padding: 12px; border-radius: 10px; font-family: 'JetBrains Mono', monospace; line-height: 1.6; }
+  #result b { color: var(--ember); font-family: 'Inter', sans-serif; }
+
+  #qr {
+    display: block;
+    margin: 14px auto 0;
+    border-radius: 12px;
+    border: 2px solid var(--cyan);
+    box-shadow: 0 0 20px rgba(33,230,193,0.35);
+  }
+
+  .copy-btn {
+    margin-top: 10px;
+    background: rgba(33,230,193,0.12);
+    color: var(--cyan);
+    box-shadow: none;
+    border: 1px solid rgba(33,230,193,0.4);
+  }
+  .copy-btn::before { display: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
 </style>
 </head>
 <body>
-  <h1>HackFire's Panel — Install</h1>
+  <div id="embers"></div>
 
-  <div class="step">
-    <h2>1. Create a Cloudflare API Token</h2>
-    <p class="muted">Use the "Edit Cloudflare Workers" template — don't create a custom one.</p>
-    <a class="btn" href="https://dash.cloudflare.com/profile/api-tokens" target="_blank" rel="noopener">Open Cloudflare Tokens</a>
-  </div>
+  <header>
+    <div class="brand"><span class="flame">🔥</span> HackFire's Panel</div>
+    <div class="tagline">// one-click cloudflare provisioning</div>
+  </header>
 
-  <div class="step">
-    <h2>2. Paste your token</h2>
-    <input type="text" id="token" placeholder="Cloudflare API token" autocomplete="off" />
-    <p class="muted">Never stored — used once to provision your panel, then discarded.</p>
-  </div>
+  <div class="rail">
+    <div class="step">
+      <div class="badge">1</div>
+      <h2>Create a Cloudflare API Token</h2>
+      <p class="muted">Use the "Edit Cloudflare Workers" template — don't create a custom one.</p>
+      <a class="btn" href="https://dash.cloudflare.com/profile/api-tokens" target="_blank" rel="noopener">Open Cloudflare Tokens</a>
+    </div>
 
-  <div class="step">
-    <h2>3. Install</h2>
-    <button id="installBtn">Install My Panel</button>
-    <p id="status" class="muted"></p>
-  </div>
+    <div class="step">
+      <div class="badge">2</div>
+      <h2>Paste your token</h2>
+      <input type="text" id="token" placeholder="cf_xxxxxxxxxxxxxxxxxxxx" autocomplete="off" />
+      <p class="muted">Never stored — used once to provision your panel, then discarded.</p>
+    </div>
 
-  <div class="step" id="resultBox" style="display:none">
-    <h2>Done 🎉</h2>
-    <div id="result"></div>
+    <div class="step">
+      <div class="badge">3</div>
+      <h2>Install</h2>
+      <button id="installBtn">⚡ Install My Panel</button>
+      <p id="status" class="muted"></p>
+    </div>
+
+    <div class="step" id="resultBox">
+      <div class="badge" style="background:linear-gradient(135deg, var(--cyan), #0ea884)">✓</div>
+      <h2>Panel is live</h2>
+      <div id="result"></div>
+      <img id="qr" style="display:none" width="180" height="180" alt="Subscription QR code" />
+      <button class="copy-btn" id="copyBtn">Copy subscription link</button>
+    </div>
   </div>
 
   <script>
     // Point this at your deployed installer-relay Worker URL.
     const RELAY_URL = 'https://YOUR-RELAY-SUBDOMAIN.workers.dev';
 
+    // ambient rising embers
+    const emberField = document.getElementById('embers');
+    const emberCount = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 22;
+    for (let i = 0; i < emberCount; i++) {
+      const el = document.createElement('div');
+      el.className = 'ember';
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.setProperty('--drift', (Math.random() * 60 - 30) + 'px');
+      el.style.animationDuration = (6 + Math.random() * 8) + 's';
+      el.style.animationDelay = (Math.random() * 10) + 's';
+      el.style.opacity = 0.4 + Math.random() * 0.6;
+      emberField.appendChild(el);
+    }
+
     const btn = document.getElementById('installBtn');
     const status = document.getElementById('status');
     const resultBox = document.getElementById('resultBox');
     const result = document.getElementById('result');
+    const qr = document.getElementById('qr');
+    const copyBtn = document.getElementById('copyBtn');
+    let lastLink = '';
 
     btn.addEventListener('click', async () => {
       const token = document.getElementById('token').value.trim();
+      status.className = 'muted';
       if (!token) { status.textContent = 'Paste your token first.'; return; }
 
       const uuid = crypto.randomUUID();
@@ -68,15 +345,28 @@
         if (!data.ok) throw new Error(data.error || 'Install failed');
 
         status.textContent = 'Installed successfully.';
-        resultBox.style.display = 'block';
+        status.className = 'ok';
+        lastLink = data.vlessLink;
         result.innerHTML =
-          '<b>Panel URL:</b><br>' + data.url + '<br><br>' +
-          '<b>Subscription link:</b><br>' + data.vlessLink;
+          '<b>Panel URL</b><br>' + data.url + '<br><br>' +
+          '<b>Subscription link</b><br>' + data.vlessLink;
+        qr.src = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(data.vlessLink);
+        qr.style.display = 'block';
+        resultBox.classList.add('show');
+        resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       } catch (err) {
         status.textContent = 'Error: ' + err.message;
+        status.className = 'err';
       } finally {
         btn.disabled = false;
       }
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      if (!lastLink) return;
+      await navigator.clipboard.writeText(lastLink);
+      copyBtn.textContent = 'Copied ✓';
+      setTimeout(() => { copyBtn.textContent = 'Copy subscription link'; }, 1800);
     });
   </script>
 </body>
