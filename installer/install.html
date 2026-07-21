@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HackFire's Panel — One-Click Install</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 480px; margin: 40px auto; padding: 0 16px; background: #0f1115; color: #eee; }
+  h1 { font-size: 1.3rem; }
+  .step { background: #1a1d24; border-radius: 10px; padding: 16px; margin-bottom: 14px; }
+  .step h2 { font-size: 1rem; margin: 0 0 8px; }
+  a.btn, button { display: inline-block; background: #f6821f; color: #fff; border: none; padding: 10px 16px; border-radius: 8px; font-size: 0.95rem; text-decoration: none; cursor: pointer; }
+  input[type=text] { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #333; background: #0f1115; color: #eee; box-sizing: border-box; margin-bottom: 10px; }
+  #result { word-break: break-all; font-size: 0.85rem; background: #0f1115; padding: 10px; border-radius: 8px; }
+  .muted { color: #999; font-size: 0.85rem; }
+</style>
+</head>
+<body>
+  <h1>HackFire's Panel — Install</h1>
+
+  <div class="step">
+    <h2>1. Create a Cloudflare API Token</h2>
+    <p class="muted">Use the "Edit Cloudflare Workers" template — don't create a custom one.</p>
+    <a class="btn" href="https://dash.cloudflare.com/profile/api-tokens" target="_blank" rel="noopener">Open Cloudflare Tokens</a>
+  </div>
+
+  <div class="step">
+    <h2>2. Paste your token</h2>
+    <input type="text" id="token" placeholder="Cloudflare API token" autocomplete="off" />
+    <p class="muted">Never stored — used once to provision your panel, then discarded.</p>
+  </div>
+
+  <div class="step">
+    <h2>3. Install</h2>
+    <button id="installBtn">Install My Panel</button>
+    <p id="status" class="muted"></p>
+  </div>
+
+  <div class="step" id="resultBox" style="display:none">
+    <h2>Done 🎉</h2>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    // Point this at your deployed installer-relay Worker URL.
+    const RELAY_URL = 'https://YOUR-RELAY-SUBDOMAIN.workers.dev';
+
+    const btn = document.getElementById('installBtn');
+    const status = document.getElementById('status');
+    const resultBox = document.getElementById('resultBox');
+    const result = document.getElementById('result');
+
+    btn.addEventListener('click', async () => {
+      const token = document.getElementById('token').value.trim();
+      if (!token) { status.textContent = 'Paste your token first.'; return; }
+
+      const uuid = crypto.randomUUID();
+      btn.disabled = true;
+      status.textContent = 'Provisioning your panel on Cloudflare...';
+
+      try {
+        const res = await fetch(RELAY_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token, uuid }),
+        });
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.error || 'Install failed');
+
+        status.textContent = 'Installed successfully.';
+        resultBox.style.display = 'block';
+        result.innerHTML =
+          '<b>Panel URL:</b><br>' + data.url + '<br><br>' +
+          '<b>Subscription link:</b><br>' + data.vlessLink;
+      } catch (err) {
+        status.textContent = 'Error: ' + err.message;
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
