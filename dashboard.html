@@ -31,43 +31,34 @@
   }
   body[dir="rtl"] { font-family: 'Vazirmatn', 'Inter', system-ui, sans-serif; }
 
-  /* ---------- ambient bokeh (distinct from prior particle style) ---------- */
   #bokeh { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
   .glow { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.16; }
   .glow.g1 { width: 40vmax; height: 40vmax; top: -12vmax; left: -10vmax; background: radial-gradient(circle, var(--sky), transparent 70%); }
   .glow.g2 { width: 32vmax; height: 32vmax; bottom: -14vmax; right: -8vmax; background: radial-gradient(circle, var(--sky-deep), transparent 70%); animation: sway 14s ease-in-out infinite; }
   @keyframes sway { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-30px, 20px); } }
 
-  /* ---------- LOGIN ---------- */
   #loginScreen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
   .login-shell { width: 100%; max-width: 380px; position: relative; }
-  .login-ring {
-    width: 74px; height: 74px; margin: 0 auto 20px; position: relative;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .login-ring::before {
-    content: ''; position: absolute; inset: 0; border-radius: 50%;
-    border: 2px solid transparent; border-top-color: var(--sky); border-right-color: var(--sky-deep);
-    animation: spin 3.5s linear infinite;
-  }
+  .login-ring { width: 74px; height: 74px; margin: 0 auto 20px; position: relative; display: flex; align-items: center; justify-content: center; }
+  .login-ring::before { content: ''; position: absolute; inset: 0; border-radius: 50%; border: 2px solid transparent; border-top-color: var(--sky); border-right-color: var(--sky-deep); animation: spin 3.5s linear infinite; }
   .login-ring .core { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, var(--sky), var(--sky-deep)); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; box-shadow: 0 0 26px 4px rgba(56,189,248,0.35); }
   @keyframes spin { to { transform: rotate(360deg); } }
   .login-title { text-align: center; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.45rem; letter-spacing: -0.01em; }
   .login-sub { text-align: center; color: var(--muted); font-size: 0.84rem; margin: 4px 0 26px; }
   .login-panel { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 22px; position: relative; }
-  .login-panel::before {
-    content: ''; position: absolute; left: 0; top: 14px; bottom: 14px; width: 3px;
-    background: linear-gradient(var(--sky), var(--sky-deep)); border-radius: 0 3px 3px 0;
-  }
+  .login-panel::before { content: ''; position: absolute; left: 0; top: 14px; bottom: 14px; width: 3px; background: linear-gradient(var(--sky), var(--sky-deep)); border-radius: 0 3px 3px 0; }
   .kv-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; color: var(--muted); margin-bottom: 16px; }
   .kv-row .live { display: inline-flex; align-items: center; gap: 5px; color: var(--good); }
   .live::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--good); animation: blink 2s ease-in-out infinite; }
   @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
-  .key-wrap { position: relative; margin-bottom: 14px; }
+  .key-wrap { position: relative; margin-bottom: 10px; }
   .key-wrap input { width: 100%; padding: 13px 42px 13px 14px; }
   body[dir="rtl"] .key-wrap input { padding: 13px 14px 13px 42px; }
   .key-eye { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; box-shadow: none; width: auto; padding: 0; color: var(--muted); cursor: pointer; }
   body[dir="rtl"] .key-eye { right: auto; left: 12px; }
+  .api-wrap { margin-bottom: 14px; }
+  .api-wrap input { width: 100%; }
+  .api-wrap .hint2 { font-size: 0.66rem; color: var(--muted); margin-top: 5px; }
 
   input[type=text], input[type=number], input[type=password], select {
     border-radius: 10px; border: 1px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.4);
@@ -80,56 +71,42 @@
     color: #04121c; border: none; padding: 13px; border-radius: 10px; font-weight: 700;
     font-size: 0.9rem; cursor: pointer; position: relative; overflow: hidden;
   }
-  .btn-primary::after {
-    content: ''; position: absolute; top: 0; left: -60%; width: 30%; height: 100%;
-    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
-    transform: skewX(-20deg); animation: sheen 4.5s ease-in-out infinite;
-  }
+  .btn-primary::after { content: ''; position: absolute; top: 0; left: -60%; width: 30%; height: 100%; background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-20deg); animation: sheen 4.5s ease-in-out infinite; }
   @keyframes sheen { 0% { left: -60%; } 40%,100% { left: 130%; } }
+  .btn-primary:disabled { opacity: 0.6; cursor: default; }
+  .btn-primary:disabled::after { animation: none; }
 
-  /* ---------- APP SHELL: sidebar layout ---------- */
   #app { display: none; min-height: 100vh; }
   .shell { display: flex; min-height: 100vh; }
 
-  .rail {
-    width: 68px; flex-shrink: 0; background: var(--rail); border-right: 1px solid var(--line);
-    display: flex; flex-direction: column; align-items: center; padding: 18px 0; gap: 4px;
-    position: sticky; top: 0; height: 100vh;
-  }
+  .rail { width: 68px; flex-shrink: 0; background: var(--rail); border-right: 1px solid var(--line); display: flex; flex-direction: column; align-items: center; padding: 18px 0; gap: 4px; position: sticky; top: 0; height: 100vh; }
   body[dir="rtl"] .rail { border-right: none; border-left: 1px solid var(--line); }
   .rail-logo { width: 38px; height: 38px; border-radius: 11px; background: linear-gradient(135deg, var(--sky), var(--sky-deep)); display: flex; align-items: center; justify-content: center; font-size: 1.05rem; margin-bottom: 18px; box-shadow: 0 0 16px 2px rgba(56,189,248,0.3); }
-  .rail-item {
-    width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
-    color: var(--muted); font-size: 1.1rem; cursor: pointer; position: relative; transition: background 0.2s, color 0.2s;
-  }
+  .rail-item { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 1.1rem; cursor: pointer; position: relative; transition: background 0.2s, color 0.2s; }
   .rail-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
   .rail-item.active { color: var(--sky-pale); background: rgba(56,189,248,0.1); }
-  .rail-item.active::before {
-    content: ''; position: absolute; left: -18px; top: 50%; transform: translateY(-50%);
-    width: 3px; height: 20px; border-radius: 3px; background: var(--sky);
-  }
+  .rail-item.active::before { content: ''; position: absolute; left: -18px; top: 50%; transform: translateY(-50%); width: 3px; height: 20px; border-radius: 3px; background: var(--sky); }
   body[dir="rtl"] .rail-item.active::before { left: auto; right: -18px; }
   .rail-spacer { flex: 1; }
   .rail-item.small { font-size: 0.85rem; }
 
-  main.content { flex: 1; min-width: 0; padding: 22px 18px 60px; max-width: 720px; }
+  main.content { flex: 1; min-width: 0; padding: 22px 18px 90px; max-width: 720px; }
 
   .topline { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; gap: 10px; }
   .topline h1 { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; margin: 0; }
   body[dir="rtl"] .topline h1 { font-family: 'Vazirmatn', sans-serif; }
   .topline .sub { color: var(--muted); font-size: 0.78rem; margin-top: 2px; }
   .status-chip { display: inline-flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--good); background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.25); padding: 5px 10px; border-radius: 8px; white-space: nowrap; }
-  .status-chip::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--good); animation: blink 2s ease-in-out infinite; }
+  .status-chip.offline { color: var(--warn); background: rgba(251,191,36,0.08); border-color: rgba(251,191,36,0.25); }
+  .status-chip::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; animation: blink 2s ease-in-out infinite; }
 
   .view { display: none; animation: rise 0.3s ease; }
   .view.active { display: block; }
   @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* bento overview grid — asymmetric, not uniform cards */
   .bento { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
   .bento-cell { grid-column: span 2; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; position: relative; overflow: hidden; }
   .bento-cell.wide { grid-column: span 4; }
-  .bento-cell.tall { grid-row: span 2; }
   .bento-cell .accent-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
   .bento-cell .num { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.5rem; }
   .bento-cell .label { font-size: 0.68rem; color: var(--muted); margin-top: 2px; }
@@ -159,7 +136,6 @@
   .action-tile:hover { background: rgba(56,189,248,0.1); }
   @media (max-width: 420px) { .action-grid { grid-template-columns: repeat(2, 1fr); } }
 
-  /* users */
   .toolbar { display: flex; gap: 8px; margin-bottom: 14px; }
   .toolbar input { flex: 1; }
   .filter-row { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
@@ -191,7 +167,6 @@
 
   .empty { text-align: center; color: var(--muted); font-size: 0.85rem; padding: 20px 0; }
 
-  /* advanced: left sub-nav + right detail (distinct from accordions) */
   .adv-shell { display: grid; grid-template-columns: 150px 1fr; gap: 14px; }
   @media (max-width: 520px) { .adv-shell { grid-template-columns: 1fr; } .adv-subnav { display: flex; overflow-x: auto; gap: 6px; } .adv-subnav .adv-link { white-space: nowrap; } }
   .adv-subnav { display: flex; flex-direction: column; gap: 4px; }
@@ -225,12 +200,12 @@
   .btn-danger { width: 100%; background: rgba(248,113,113,0.1); color: var(--danger); border: 1px solid rgba(248,113,113,0.35); padding: 10px; border-radius: 10px; font-size: 0.82rem; font-weight: 600; cursor: pointer; }
 
   .add-fab {
-    position: fixed; bottom: 22px; right: 22px; width: 52px; height: 52px; border-radius: 16px;
-    background: linear-gradient(135deg, var(--sky), var(--sky-deep)); color: #04121c; font-size: 1.3rem;
+    position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+    width: 56px; height: 56px; border-radius: 18px;
+    background: linear-gradient(135deg, var(--sky), var(--sky-deep)); color: #04121c; font-size: 1.4rem;
     border: none; cursor: pointer; box-shadow: 0 8px 24px rgba(56,189,248,0.4); z-index: 25;
-    display: none;
+    display: none; align-items: center; justify-content: center;
   }
-  body[dir="rtl"] .add-fab { right: auto; left: 22px; }
 
   .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); z-index: 30; display: none; align-items: flex-end; justify-content: center; }
   .overlay.open { display: flex; }
@@ -244,7 +219,7 @@
   .sheet-actions button { flex: 1; }
   .btn-ghost { background: rgba(255,255,255,0.04); color: var(--text); border: 1px solid var(--line); padding: 10px; border-radius: 9px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
 
-  #toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(20px); background: var(--panel); border: 1px solid rgba(56,189,248,0.35); color: var(--sky-pale); padding: 10px 18px; border-radius: 10px; font-size: 0.8rem; opacity: 0; transition: opacity 0.25s, transform 0.25s; z-index: 40; font-family: 'JetBrains Mono', monospace; pointer-events: none; }
+  #toast { position: fixed; left: 50%; bottom: 90px; transform: translateX(-50%) translateY(20px); background: var(--panel); border: 1px solid rgba(56,189,248,0.35); color: var(--sky-pale); padding: 10px 18px; border-radius: 10px; font-size: 0.8rem; opacity: 0; transition: opacity 0.25s, transform 0.25s; z-index: 40; font-family: 'JetBrains Mono', monospace; pointer-events: none; max-width: 90vw; text-align: center; }
   #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   .foot-note { text-align: center; color: var(--muted); font-size: 0.64rem; margin-top: 20px; font-family: 'JetBrains Mono', monospace; line-height: 1.6; }
@@ -265,6 +240,10 @@
         <div class="kv-row">
           <span data-i18n="secureConn">Encrypted session</span>
           <span class="live" data-i18n="systemActive">online</span>
+        </div>
+        <div class="api-wrap">
+          <input type="text" id="apiBaseInput" placeholder="Worker URL, e.g. https://hackfires-panel.you.workers.dev" />
+          <div class="hint2" data-i18n="apiHint">Your deployed worker's URL — saved on this device only.</div>
         </div>
         <div class="key-wrap">
           <input type="password" id="masterKey" placeholder="Master key" data-i18n-ph="masterKeyPh" />
@@ -295,7 +274,7 @@
             <h1 data-i18n="brandName">HackFire's Panel</h1>
             <div class="sub" id="viewSub" data-i18n="subOverview">Live overview of your gateway</div>
           </div>
-          <span class="status-chip" data-i18n="running">operational</span>
+          <span class="status-chip" id="apiStatus" data-i18n="running">operational</span>
         </div>
 
         <!-- OVERVIEW -->
@@ -357,6 +336,11 @@
         <!-- SETTINGS -->
         <div class="view" id="view-settings">
           <div class="block">
+            <div class="block-head"><h2 data-i18n="connection">Connection</h2></div>
+            <div class="t-row"><div><div class="tl">API base</div><div class="td" id="apiBaseShown">–</div></div><button class="u-menu-btn" id="editApiBase">✎</button></div>
+          </div>
+
+          <div class="block">
             <div class="block-head"><h2 data-i18n="displaySettings">Display</h2></div>
             <div class="t-row">
               <div><div class="tl" data-i18n="theme">Theme</div><div class="td" data-i18n="themeDesc">Accent color for the panel</div></div>
@@ -370,8 +354,7 @@
           <div class="block">
             <div class="block-head"><h2 data-i18n="panelInfo">Panel info</h2></div>
             <div class="t-row"><div class="tl" data-i18n="worker">Worker</div><div class="td">hackfires-panel</div></div>
-            <div class="t-row"><div><div class="tl" data-i18n="uuidLabel">UUID</div><div class="td" id="uuidValue">4e1c9a8f-...-9af2</div></div><button class="u-menu-btn" id="regenUuid">🔄</button></div>
-            <div class="t-row"><div class="tl" data-i18n="version">Version</div><div class="td">v0.4.0-dev</div></div>
+            <div class="t-row"><div class="tl" data-i18n="version">Version</div><div class="td">v0.5.0</div></div>
           </div>
 
           <div class="block">
@@ -388,12 +371,12 @@
 
           <div class="block danger-block">
             <div class="block-head"><h2 data-i18n="dangerZone">Danger zone</h2></div>
-            <p class="td" style="margin-bottom:10px" data-i18n="dangerDesc">Revoke all subscription links and force everyone to reconnect.</p>
+            <p class="td" style="margin-bottom:10px" data-i18n="dangerDesc">Pause every user's access at once.</p>
             <button class="btn-danger" id="killSwitch" data-i18n="killSwitch">Kill switch — pause all users</button>
           </div>
         </div>
 
-        <div class="foot-note" data-i18n="footerNote">Live data requires the KV-backed users API on the main worker. Showing placeholder data until that's wired up.</div>
+        <div class="foot-note" id="footNote"></div>
       </main>
     </div>
   </div>
@@ -420,38 +403,40 @@
   <div id="toast"></div>
 
   <script>
-    // ---------------- i18n ----------------
+    // ================= i18n =================
     const dict = {
       en: {
         gatewayTitle: "HackFire's Panel", gatewaySub: 'Enter your master key to continue',
         secureConn: 'Encrypted session', systemActive: 'online', masterKeyPh: 'Master key', signIn: 'Unlock panel',
+        apiHint: "Your deployed worker's URL — saved on this device only.",
         brandName: "HackFire's Panel", subOverview: 'Live overview of your gateway',
         active: 'Active users', totalUsers: 'Total users', disabled: 'Disabled', expired: 'Expired soon',
         trafficToday: 'Traffic today · total',
         quickActions: 'Quick actions', manageUsers: 'Manage', addUser: 'Add user', refreshStats: 'Refresh', backup: 'Backup',
         weeklyTraffic: 'Weekly traffic', recentActivity: 'Recent activity',
         searchPh: 'Search users...',
+        connection: 'Connection',
         displaySettings: 'Display', theme: 'Theme', themeDesc: 'Accent color for the panel',
         panelInfo: 'Panel info', worker: 'Worker', running: 'operational', uuidLabel: 'UUID', version: 'Version',
         dataPorts: 'Data ports',
-        dangerZone: 'Danger zone', dangerDesc: 'Revoke all subscription links and force everyone to reconnect.', killSwitch: 'Kill switch — pause all users',
-        footerNote: 'Live data requires the KV-backed users API on the main worker. Showing placeholder data until that\'s wired up.',
+        dangerZone: 'Danger zone', dangerDesc: "Pause every user's access at once.", killSwitch: 'Kill switch — pause all users',
         addUserTitle: 'Add user', label: 'Label', protocol: 'Protocol', quotaGb: 'Quota (GB)', expiresDays: 'Expires in (days)', cancel: 'Cancel',
       },
       fa: {
         gatewayTitle: 'پنل HackFire', gatewaySub: 'کلید اصلی را وارد کنید',
         secureConn: 'نشست رمزنگاری‌شده', systemActive: 'آنلاین', masterKeyPh: 'کلید اصلی', signIn: 'باز کردن پنل',
+        apiHint: 'آدرس ورکر شما — فقط روی این دستگاه ذخیره می‌شود.',
         brandName: 'پنل HackFire', subOverview: 'نمای زنده دروازه شما',
         active: 'کاربران فعال', totalUsers: 'کل کاربران', disabled: 'غیرفعال', expired: 'در حال انقضا',
         trafficToday: 'ترافیک امروز · کل',
         quickActions: 'عملیات سریع', manageUsers: 'مدیریت', addUser: 'افزودن کاربر', refreshStats: 'به‌روزرسانی', backup: 'پشتیبان‌گیری',
         weeklyTraffic: 'ترافیک هفتگی', recentActivity: 'فعالیت اخیر',
         searchPh: 'جستجوی کاربران...',
+        connection: 'اتصال',
         displaySettings: 'نمایش', theme: 'تم', themeDesc: 'رنگ اصلی پنل',
         panelInfo: 'اطلاعات پنل', worker: 'ورکر', running: 'در حال اجرا', uuidLabel: 'شناسه یکتا', version: 'نسخه',
         dataPorts: 'پورت داده',
-        dangerZone: 'منطقه خطر', dangerDesc: 'همه لینک‌های اشتراک را باطل کرده و کاربران را مجبور به اتصال مجدد می‌کند.', killSwitch: 'توقف اضطراری — توقف همه کاربران',
-        footerNote: 'داده‌های واقعی نیاز به API کاربران مبتنی بر KV روی ورکر اصلی دارد. در حال حاضر داده نمایشی است.',
+        dangerZone: 'منطقه خطر', dangerDesc: 'دسترسی همه کاربران را به‌طور همزمان متوقف می‌کند.', killSwitch: 'توقف اضطراری — توقف همه کاربران',
         addUserTitle: 'افزودن کاربر', label: 'برچسب', protocol: 'پروتکل', quotaGb: 'سهمیه (گیگابایت)', expiresDays: 'انقضا (روز)', cancel: 'انصراف',
       },
     };
@@ -462,44 +447,104 @@
       document.querySelectorAll('[data-i18n-ph]').forEach(el => { if (d[el.dataset.i18nPh]) el.placeholder = d[el.dataset.i18nPh]; });
       document.body.dir = lang === 'fa' ? 'rtl' : 'ltr';
       document.getElementById('langToggle').textContent = lang === 'fa' ? 'EN' : 'فا';
+      renderFootNote();
     }
     document.getElementById('langToggle').addEventListener('click', () => { lang = lang === 'fa' ? 'en' : 'fa'; applyLang(); });
 
-    // ---------------- login ----------------
+    // ================= API layer =================
+    let apiBase = localStorage.getItem('hf_api_base') || '';
+    let masterKey = sessionStorage.getItem('hf_key') || '';
+    document.getElementById('apiBaseInput').value = apiBase;
+
+    async function apiCall(path, opts = {}) {
+      if (!apiBase) throw new Error('No worker URL configured');
+      const res = await fetch(apiBase.replace(/\/$/, '') + path, {
+        ...opts,
+        headers: { 'Content-Type': 'application/json', 'X-Master-Key': masterKey, ...(opts.headers || {}) },
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+      return data;
+    }
+
+    function renderFootNote() {
+      const note = document.getElementById('footNote');
+      if (!note) return;
+      note.textContent = apiBase
+        ? (lang === 'fa' ? 'داده‌ها به‌صورت زنده از ورکر شما خوانده می‌شود.' : 'Live data — reading directly from your worker.')
+        : (lang === 'fa' ? 'برای داده واقعی، آدرس ورکر را در تنظیمات وارد کنید.' : 'Set your worker URL in Settings to load real data.');
+    }
+
+    // ================= login =================
     const loginScreen = document.getElementById('loginScreen');
     const app = document.getElementById('app');
     const addFab = document.getElementById('addFab');
-    function unlock() {
+
+    function setApiStatus(ok) {
+      const chip = document.getElementById('apiStatus');
+      chip.classList.toggle('offline', !ok);
+      chip.textContent = ok ? (lang === 'fa' ? 'در حال اجرا' : 'operational') : (lang === 'fa' ? 'بدون اتصال' : 'no connection');
+    }
+
+    async function unlock() {
       loginScreen.style.display = 'none';
       app.style.display = 'block';
       addFab.style.display = 'flex';
-      sessionStorage.setItem('hf_unlocked','1');
+      document.getElementById('apiBaseShown').textContent = apiBase || '(not set)';
+      renderFootNote();
+      await loadUsers();
     }
-    if (sessionStorage.getItem('hf_unlocked') === '1') unlock();
-    document.getElementById('signInBtn').addEventListener('click', () => {
-      const v = document.getElementById('masterKey').value.trim();
-      if (!v) { toast('Enter your master key'); return; }
-      unlock();
+
+    document.getElementById('signInBtn').addEventListener('click', async () => {
+      const key = document.getElementById('masterKey').value.trim();
+      const base = document.getElementById('apiBaseInput').value.trim();
+      if (!key) { toast('Enter your master key'); return; }
+      if (!base) { toast('Enter your worker URL'); return; }
+
+      const btn = document.getElementById('signInBtn');
+      btn.disabled = true; btn.textContent = '...';
+      try {
+        const res = await fetch(base.replace(/\/$/, '') + '/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key }),
+        });
+        const data = await res.json();
+        if (!data.ok) { toast('Incorrect master key'); btn.disabled = false; btn.textContent = 'Unlock panel'; return; }
+
+        apiBase = base; masterKey = key;
+        localStorage.setItem('hf_api_base', apiBase);
+        sessionStorage.setItem('hf_key', masterKey);
+        setApiStatus(true);
+        await unlock();
+      } catch (err) {
+        toast('Could not reach worker: ' + err.message);
+      } finally {
+        btn.disabled = false; btn.textContent = dict[lang].signIn;
+      }
     });
+
     document.getElementById('keyToggle').addEventListener('click', () => {
       const i = document.getElementById('masterKey');
       i.type = i.type === 'password' ? 'text' : 'password';
     });
     document.getElementById('logoutBtn').addEventListener('click', () => {
-      sessionStorage.removeItem('hf_unlocked');
-      app.style.display = 'none';
-      addFab.style.display = 'none';
-      loginScreen.style.display = 'flex';
+      sessionStorage.removeItem('hf_key'); masterKey = '';
+      app.style.display = 'none'; addFab.style.display = 'none'; loginScreen.style.display = 'flex';
+    });
+    document.getElementById('editApiBase').addEventListener('click', () => {
+      const val = prompt('Worker URL:', apiBase);
+      if (val !== null) { apiBase = val.trim(); localStorage.setItem('hf_api_base', apiBase); document.getElementById('apiBaseShown').textContent = apiBase || '(not set)'; renderFootNote(); loadUsers(); }
     });
 
-    // ---------------- toast ----------------
+    // ================= toast =================
     const toastEl = document.getElementById('toast');
     function toast(msg) {
       toastEl.textContent = msg; toastEl.classList.add('show');
-      clearTimeout(toastEl._t); toastEl._t = setTimeout(() => toastEl.classList.remove('show'), 1700);
+      clearTimeout(toastEl._t); toastEl._t = setTimeout(() => toastEl.classList.remove('show'), 2200);
     }
 
-    // ---------------- sidebar nav ----------------
+    // ================= sidebar nav =================
     function switchView(name) {
       document.querySelectorAll('.rail-item[data-view]').forEach(r => r.classList.toggle('active', r.dataset.view === name));
       document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + name));
@@ -507,22 +552,33 @@
     document.querySelectorAll('.rail-item[data-view]').forEach(r => r.addEventListener('click', () => switchView(r.dataset.view)));
     document.querySelectorAll('[data-view-link]').forEach(el => el.addEventListener('click', () => switchView(el.dataset.viewLink)));
 
-    // ---------------- data ----------------
-    let users = [
-      { name: 'primary', uuid: crypto.randomUUID(), proto: 'VLESS', usedGB: 3.2, quotaGB: 10, active: true, expiresDays: 28, configs: 30, ports: '443,2053,80' },
-      { name: 'guest-1', uuid: crypto.randomUUID(), proto: 'Trojan', usedGB: 8.7, quotaGB: 10, active: true, expiresDays: 4, configs: 18, ports: '443,2087' },
-      { name: 'backup', uuid: crypto.randomUUID(), proto: 'SS', usedGB: 0.4, quotaGB: 5, active: false, expiresDays: 60, configs: 12, ports: '8443' },
-    ];
+    // ================= users (real, via API) =================
+    let users = [];
     let protoFilter = 'all', searchTerm = '', expandedIndex = null;
+
+    function daysLeft(expiresAt) { return Math.max(0, Math.ceil((expiresAt - Date.now()) / 86400000)); }
+
+    async function loadUsers() {
+      if (!apiBase) { users = []; setApiStatus(false); render(); return; }
+      try {
+        const data = await apiCall('/api/users');
+        users = data.users || [];
+        setApiStatus(true);
+      } catch (err) {
+        setApiStatus(false);
+        toast('Failed to load users: ' + err.message);
+      }
+      render();
+    }
 
     function refreshOverview() {
       const active = users.filter(u => u.active).length;
       document.getElementById('statActive').textContent = active;
       document.getElementById('statTotal').textContent = users.length;
       document.getElementById('statDisabled').textContent = users.length - active;
-      document.getElementById('statExpired').textContent = users.filter(u => u.expiresDays <= 7).length;
-      document.getElementById('statTrafficToday').textContent = users.reduce((s,u)=>s+u.usedGB,0).toFixed(2) + ' GB';
-      document.getElementById('statTrafficTotal').textContent = (users.reduce((s,u)=>s+u.usedGB,0) * 6).toFixed(1) + ' GB';
+      document.getElementById('statExpired').textContent = users.filter(u => daysLeft(u.expiresAt) <= 7).length;
+      document.getElementById('statTrafficToday').textContent = users.reduce((s,u)=>s+(u.usedGB||0),0).toFixed(2) + ' GB';
+      document.getElementById('statTrafficTotal').textContent = (users.reduce((s,u)=>s+(u.usedGB||0),0) * 6).toFixed(1) + ' GB';
     }
 
     function renderSpark() {
@@ -534,34 +590,32 @@
     }
 
     function renderActivity() {
-      const items = [
-        ['Auth success · 203.0.113.4', '2m ago', 'good'],
-        ['guest-1 connected', '18m ago', 'good'],
-        ['primary hit 80% quota', '1h ago', 'warn'],
-        ['backup access disabled', '6h ago', 'muted'],
-      ];
+      const items = users.length
+        ? users.slice(0, 4).map(u => [`${u.name} · ${u.active ? 'active' : 'paused'}`, '', u.active ? 'good' : 'muted'])
+        : [['No users yet', '', 'muted']];
       document.getElementById('activityList').innerHTML = items.map(([t,time,tone]) =>
         `<div class="pulse-row"><span class="pulse-dot" style="background:var(--${tone === 'muted' ? 'muted' : tone})"></span><span class="pulse-text">${t}</span><span class="pulse-time">${time}</span></div>`
       ).join('');
     }
 
     const userList = document.getElementById('userList');
-    function shortUuid(u) { return u.slice(0,8) + '…'; }
+    function shortUuid(u) { return (u||'').slice(0,8) + '…'; }
     function renderUsers() {
-      const filtered = users.filter(u => (protoFilter==='all'||u.proto===protoFilter) && u.name.toLowerCase().includes(searchTerm.toLowerCase()));
+      const filtered = users.filter(u => (protoFilter==='all'||u.proto===protoFilter) && (u.name||'').toLowerCase().includes(searchTerm.toLowerCase()));
       userList.innerHTML = '';
+      if (!apiBase) { userList.innerHTML = '<div class="empty">Set your worker URL in Settings to manage real users.</div>'; return; }
       if (!filtered.length) { userList.innerHTML = '<div class="empty">No users match.</div>'; return; }
       filtered.forEach(u => {
         const i = users.indexOf(u);
-        const pct = Math.min(100, (u.usedGB/u.quotaGB)*100);
+        const pct = Math.min(100, ((u.usedGB||0)/(u.quotaGB||1))*100);
         const warn = pct > 80;
         const card = document.createElement('div');
         card.className = 'u-card' + (expandedIndex === i ? ' expanded' : '');
         card.innerHTML = `
-          <div class="u-glyph">${u.name.slice(0,2).toUpperCase()}</div>
+          <div class="u-glyph">${(u.name||'??').slice(0,2).toUpperCase()}</div>
           <div>
             <div class="u-name-line"><span class="u-dot ${u.active?'':'off'}"></span><span class="u-name">${u.name}</span><span class="u-tag">${u.proto}</span></div>
-            <div class="u-meta">${shortUuid(u.uuid)} · ${u.usedGB}/${u.quotaGB} GB · ${u.expiresDays}d left · cfgs ${u.configs}</div>
+            <div class="u-meta">${shortUuid(u.uuid)} · ${(u.usedGB||0).toFixed(1)}/${u.quotaGB} GB · ${daysLeft(u.expiresAt)}d left</div>
             <div class="u-bar"><div class="u-fill ${warn?'warn':''}" style="width:${pct}%"></div></div>
           </div>
           <div class="u-controls">
@@ -570,7 +624,6 @@
           </div>
           <div class="u-full">
             <button class="d" data-del="${i}">Delete</button>
-            <button data-regen="${i}">Regen UUID</button>
             <button data-edit="${i}">Edit quota</button>
             <button class="s" data-copy="${i}">Copy link</button>
           </div>
@@ -578,7 +631,7 @@
         userList.appendChild(card);
       });
     }
-    function render() { refreshOverview(); renderUsers(); }
+    function render() { refreshOverview(); renderUsers(); renderActivity(); }
 
     document.getElementById('searchInput').addEventListener('input', e => { searchTerm = e.target.value; renderUsers(); });
     document.querySelectorAll('.filter-pill').forEach(p => p.addEventListener('click', () => {
@@ -586,56 +639,75 @@
       p.classList.add('active'); protoFilter = p.dataset.proto; renderUsers();
     }));
 
-    userList.addEventListener('click', e => {
+    userList.addEventListener('click', async e => {
       const t = e.target.closest('button');
       if (!t) return;
-      if (t.dataset.i !== undefined && t.classList.contains('u-toggle')) { users[+t.dataset.i].active = !users[+t.dataset.i].active; render(); return; }
+      if (t.dataset.i !== undefined && t.classList.contains('u-toggle')) {
+        const u = users[+t.dataset.i];
+        try { await apiCall(`/api/users/${u.uuid}`, { method: 'PATCH', body: JSON.stringify({ active: !u.active }) }); await loadUsers(); }
+        catch (err) { toast(err.message); }
+        return;
+      }
       if (t.dataset.expand !== undefined) { const idx = +t.dataset.expand; expandedIndex = expandedIndex === idx ? null : idx; renderUsers(); return; }
       if (t.dataset.copy !== undefined) {
         const u = users[+t.dataset.copy];
-        navigator.clipboard.writeText(`${u.proto.toLowerCase()}://${u.uuid}@example.workers.dev:443?encryption=none&security=tls&type=ws#${u.name}`);
+        const host = apiBase.replace(/^https?:\/\//,'').replace(/\/$/,'');
+        navigator.clipboard.writeText(`${(u.proto||'vless').toLowerCase()}://${u.uuid}@${host}:443?encryption=none&security=tls&type=ws#${u.name}`);
         toast('Link copied'); return;
       }
-      if (t.dataset.regen !== undefined) { users[+t.dataset.regen].uuid = crypto.randomUUID(); render(); toast('UUID regenerated'); return; }
       if (t.dataset.edit !== undefined) {
         const u = users[+t.dataset.edit];
         const val = prompt(`New quota (GB) for ${u.name}:`, u.quotaGB);
-        if (val && !isNaN(+val)) { u.quotaGB = +val; render(); toast('Quota updated'); }
+        if (val && !isNaN(+val)) {
+          try { await apiCall(`/api/users/${u.uuid}`, { method: 'PATCH', body: JSON.stringify({ quotaGB: +val }) }); await loadUsers(); toast('Quota updated'); }
+          catch (err) { toast(err.message); }
+        }
         return;
       }
       if (t.dataset.del !== undefined) {
         const u = users[+t.dataset.del];
-        if (confirm(`Delete ${u.name}?`)) { users.splice(+t.dataset.del,1); expandedIndex=null; render(); toast('User deleted'); }
+        if (confirm(`Delete ${u.name}?`)) {
+          try { await apiCall(`/api/users/${u.uuid}`, { method: 'DELETE' }); expandedIndex=null; await loadUsers(); toast('User deleted'); }
+          catch (err) { toast(err.message); }
+        }
       }
     });
 
-    // ---------------- add user ----------------
+    // ================= add user =================
     const overlay = document.getElementById('overlay');
     addFab.addEventListener('click', () => overlay.classList.add('open'));
     document.getElementById('qaAddUser').addEventListener('click', () => overlay.classList.add('open'));
     document.getElementById('cancelAdd').addEventListener('click', () => overlay.classList.remove('open'));
     overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
-    document.getElementById('confirmAdd').addEventListener('click', () => {
+    document.getElementById('confirmAdd').addEventListener('click', async () => {
       const name = document.getElementById('newName').value.trim();
       if (!name) { toast('Enter a label first'); return; }
-      users.push({ name, uuid: crypto.randomUUID(), proto: document.getElementById('newProto').value,
-        usedGB: 0, quotaGB: +document.getElementById('newQuota').value || 10,
-        active: true, expiresDays: +document.getElementById('newExpiry').value || 30, configs: 0, ports: '443' });
-      overlay.classList.remove('open'); document.getElementById('newName').value = '';
-      render(); toast('User added');
+      try {
+        await apiCall('/api/users', {
+          method: 'POST',
+          body: JSON.stringify({
+            name,
+            proto: document.getElementById('newProto').value,
+            quotaGB: +document.getElementById('newQuota').value || 10,
+            expiresDays: +document.getElementById('newExpiry').value || 30,
+          }),
+        });
+        overlay.classList.remove('open'); document.getElementById('newName').value = '';
+        await loadUsers(); toast('User added');
+      } catch (err) { toast(err.message); }
     });
 
-    // ---------------- quick actions ----------------
-    document.getElementById('qaRefresh').addEventListener('click', () => { render(); toast('Stats refreshed'); });
+    // ================= quick actions =================
+    document.getElementById('qaRefresh').addEventListener('click', async () => { await loadUsers(); toast('Stats refreshed'); });
     document.getElementById('qaBackup').addEventListener('click', () => {
       const blob = new Blob([JSON.stringify(users, null, 2)], { type: 'application/json' });
       const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'hackfires-panel-backup.json'; a.click();
       toast('Backup downloaded');
     });
 
-    // ---------------- ADVANCED: sub-nav + detail pane ----------------
+    // ================= ADVANCED (UI-only controls, not yet backed by API) =================
     let routingRules = [ { domain: 'netflix.com', mode: 'Direct' }, { domain: 'instagram.com', mode: 'Proxy' } ];
-    let nodes = [ { name: 'hackfires-panel (primary)', region: 'Frankfurt', ms: 42 }, { name: 'hackfires-panel-2', region: 'Singapore', ms: 118 } ];
+    let nodes = [ { name: 'hackfires-panel (primary)', region: 'Auto', ms: 42 } ];
     let advActive = 0;
 
     const advSections = [
@@ -682,33 +754,37 @@
       advActive = +link.dataset.adv; renderAdvanced();
     });
     document.getElementById('advDetail').addEventListener('click', e => {
-      if (e.target.dataset.tgl !== undefined) { e.target.classList.toggle('on'); toast('Setting updated'); return; }
+      if (e.target.dataset.tgl !== undefined) { e.target.classList.toggle('on'); toast('Setting saved locally — not yet backed by the worker'); return; }
       if (e.target.id === 'addRuleBtn') {
         const domain = document.getElementById('newRuleDomain').value.trim();
         if (!domain) { toast('Enter a domain first'); return; }
-        routingRules.push({ domain, mode: 'Proxy' }); renderAdvanced(); toast('Rule added'); return;
+        routingRules.push({ domain, mode: 'Proxy' }); renderAdvanced(); toast('Rule added (local only)'); return;
       }
       if (e.target.dataset.ruleDel !== undefined) { routingRules.splice(+e.target.dataset.ruleDel,1); renderAdvanced(); toast('Rule removed'); return; }
       if (e.target.id === 'addNodeBtn') {
         const url = document.getElementById('newNodeUrl').value.trim();
         if (!url) { toast('Enter a worker URL first'); return; }
         nodes.push({ name: url.replace(/^https?:\/\//,''), region: 'Auto', ms: Math.floor(30+Math.random()*150) });
-        renderAdvanced(); toast('Node registered'); return;
+        renderAdvanced(); toast('Node added (local only)'); return;
       }
     });
     document.getElementById('advDetail').addEventListener('change', e => {
       if (e.target.dataset.ruleMode !== undefined) { routingRules[+e.target.dataset.ruleMode].mode = e.target.value; toast('Rule updated'); }
     });
 
-    // ---------------- settings ----------------
-    document.getElementById('killSwitch').addEventListener('click', () => {
-      if (confirm('Pause access for every user immediately?')) { users.forEach(u => u.active=false); render(); toast('All users paused'); }
-    });
-    document.getElementById('regenUuid').addEventListener('click', () => {
-      document.getElementById('uuidValue').textContent = crypto.randomUUID(); toast('UUID regenerated');
+    // ================= settings =================
+    document.getElementById('killSwitch').addEventListener('click', async () => {
+      if (!confirm('Pause access for every user immediately?')) return;
+      try {
+        await Promise.all(users.map(u => apiCall(`/api/users/${u.uuid}`, { method: 'PATCH', body: JSON.stringify({ active: false }) })));
+        await loadUsers(); toast('All users paused');
+      } catch (err) { toast(err.message); }
     });
 
-    renderSpark(); renderActivity(); render(); applyLang();
+    // ================= boot =================
+    renderSpark();
+    applyLang();
+    if (apiBase && masterKey) { unlock(); } else { setApiStatus(false); }
   </script>
 </body>
 </html>
