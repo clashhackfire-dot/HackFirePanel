@@ -1,16 +1,35 @@
-// HackFire's Panel — Main Worker (Step 1)
-// Single-user VLESS-over-WebSocket relay on Cloudflare Workers.
-// No dashboard yet — this is the bare relay core everything else builds on.
+// HackFire's Panel — Main Worker
+// VLESS-over-WebSocket relay + a small KV-backed users API for the dashboard.
+//
+// Required setup (run once, from Termux):
+//   wrangler kv:namespace create USERS_KV
+//   -> paste the returned id into wrangler.jsonc under kv_namespaces
+//   wrangler secret put MASTER_KEY      (this becomes your real login password)
+//   wrangler deploy
 
 import { connect } from 'cloudflare:sockets';
 
-// Set this in wrangler.jsonc vars, or Cloudflare dashboard > Settings > Variables.
-// Generate one with: node -e "console.log(crypto.randomUUID())"
 const FALLBACK_USER_ID = '00000000-0000-0000-0000-000000000000';
+
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, X-Master-Key',
+};
 
 export default {
   async fetch(request, env, ctx) {
     try {
+      const url = new URL(request.url);
+
+      if (request.method === 'OPTIONS' && url.pathname.startsWith('/api/')) {
+        return new Response(null, { headers: CORS_HEADERS });
+      }
+
+      if (url.pathname.startsWith('/api/')) {
+        return await handleApi(request, env, url);
+      }
+
       const userID = (env.USER_ID || FALLBACK_USER_ID).trim();
       const upgradeHeader = request.headers.get('Upgrade');
 
@@ -18,8 +37,6 @@ export default {
         return await handleVlessOverWs(request, userID);
       }
 
-      // Plain HTTP request — show a minimal status/info page instead of erroring.
-      const url = new URL(request.url);
       if (url.pathname === `/${userID}`) {
         return new Response(buildInfoPage(request, userID), {
           headers: { 'content-type': 'text/plain;charset=utf-8' },
@@ -33,7 +50,95 @@ export default {
   },
 };
 
-// ---- Core VLESS + WebSocket relay ----
+// ==================== DASHBOARD API ====================
+
+function jsonRes(obj, status = 200) {
+  return new Response(JSON.stringify(obj), {
+    status,
+    headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
+  });
+}
+
+function checkAuth(request, env) {
+  const key = request.headers.get('X-Master-Key') || '';
+  if (!env.MASTER_KEY) return false; // refuse to run wide open if no key is configured
+  return key === env.MASTER_KEY;
+}
+
+async function handleApi(request, env, url) {
+  if (!env.USERS_KV) {
+    return jsonRes({ error: 'USERS_KV binding missing — see wrangler.jsonc setup notes in worker.js' }, 500);
+  }
+
+  // Login check — does not require prior auth, this IS the auth check.
+  if (url.pathname === '/api/login' && request.method === 'POST') {
+    const body = await safeJson(request);
+    const ok = !!env.MASTER_KEY && body.key === env.MASTER_KEY;
+    return jsonRes({ ok });
+  }
+
+  if (!checkAuth(request, env)) {
+    return jsonRes({ error: 'Unauthorized' }, 401);
+  }
+
+  // /api/users  (GET list, POST create)
+  if (url.pathname === '/api/users' && request.method === 'GET') {
+    const list = await env.USERS_KV.list({ prefix: 'user:' });
+    const users = [];
+    for (const key of list.keys) {
+      const val = await env.USERS_KV.get(key.name, 'json');
+      if (val) users.push(val);
+    }
+    return jsonRes({ users });
+  }
+
+  if (url.pathname === '/api/users' && request.method === 'POST') {
+    const body = await safeJson(request);
+    if (!body.name) return jsonRes({ error: 'name is required' }, 400);
+    const uuid = crypto.randomUUID();
+    const user = {
+      uuid,
+      name: body.name,
+      proto: body.proto || 'VLESS',
+      quotaGB: Number(body.quotaGB) || 10,
+      usedGB: 0,
+      active: true,
+      createdAt: Date.now(),
+      expiresAt: Date.now() + (Number(body.expiresDays) || 30) * 86400000,
+    };
+    await env.USERS_KV.put(`user:${uuid}`, JSON.stringify(user));
+    return jsonRes({ user }, 201);
+  }
+
+  // /api/users/:uuid  (PATCH update, DELETE remove)
+  const userMatch = url.pathname.match(/^\/api\/users\/([a-f0-9-]+)$/);
+  if (userMatch) {
+    const uuid = userMatch[1];
+    const key = `user:${uuid}`;
+
+    if (request.method === 'PATCH') {
+      const existing = await env.USERS_KV.get(key, 'json');
+      if (!existing) return jsonRes({ error: 'Not found' }, 404);
+      const body = await safeJson(request);
+      const updated = { ...existing, ...body, uuid };
+      await env.USERS_KV.put(key, JSON.stringify(updated));
+      return jsonRes({ user: updated });
+    }
+
+    if (request.method === 'DELETE') {
+      await env.USERS_KV.delete(key);
+      return jsonRes({ ok: true });
+    }
+  }
+
+  return jsonRes({ error: 'Not found' }, 404);
+}
+
+async function safeJson(request) {
+  try { return await request.json(); } catch { return {}; }
+}
+
+// ==================== VLESS + WebSocket relay ====================
 
 async function handleVlessOverWs(request, userID) {
   const webSocketPair = new WebSocketPair();
@@ -64,7 +169,6 @@ async function handleVlessOverWs(request, userID) {
           }
 
           if (isUDP) {
-            // DNS-over-UDP-in-VLESS is common for port 53; anything else UDP is unsupported here.
             if (portRemote !== 53) {
               throw new Error('UDP only supported on port 53 in this build');
             }
@@ -110,7 +214,7 @@ async function handleTcpOutbound({ remoteSocket, addressRemote, portRemote, rawC
     .pipeTo(
       new WritableStream({
         write(chunk) {
-          if (server.readyState !== 1 /* OPEN */) return;
+          if (server.readyState !== 1) return;
           if (!headerSent) {
             const combined = new Uint8Array(vlessResponseHeader.length + chunk.byteLength);
             combined.set(vlessResponseHeader, 0);
@@ -133,8 +237,6 @@ async function handleTcpOutbound({ remoteSocket, addressRemote, portRemote, rawC
       safeCloseWebSocket(server);
     });
 }
-
-// ---- VLESS header parsing (protocol ref: xtls/xray VLESS spec) ----
 
 function parseVlessHeader(buffer, userID) {
   if (buffer.byteLength < 24) {
@@ -173,16 +275,16 @@ function parseVlessHeader(buffer, userID) {
   let addressValue = '';
 
   switch (addressType) {
-    case 1: // IPv4
+    case 1:
       addressLength = 4;
       addressValue = new Uint8Array(buffer.slice(addressValueIndex, addressValueIndex + addressLength)).join('.');
       break;
-    case 2: // domain
+    case 2:
       addressLength = new Uint8Array(buffer.slice(addressValueIndex, addressValueIndex + 1))[0];
       addressValueIndex += 1;
       addressValue = new TextDecoder().decode(buffer.slice(addressValueIndex, addressValueIndex + addressLength));
       break;
-    case 3: { // IPv6
+    case 3: {
       addressLength = 16;
       const dataView = new DataView(buffer.slice(addressValueIndex, addressValueIndex + addressLength));
       const parts = [];
@@ -215,8 +317,6 @@ function bytesToUuid(bytes) {
   const hex = [...bytes].map((b) => b.toString(16).padStart(2, '0')).join('');
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
-
-// ---- WebSocket <-> ReadableStream bridge ----
 
 function makeWebSocketReadable(webSocket, earlyDataHeader) {
   let cancelled = false;
