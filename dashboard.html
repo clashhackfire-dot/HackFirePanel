@@ -181,9 +181,28 @@
   .accordion-head { display: flex; align-items: center; justify-content: space-between; padding: 13px 14px; cursor: pointer; font-size: 0.85rem; font-weight: 600; background: rgba(255,255,255,0.02); }
   .accordion-head .chev { transition: transform 0.25s; color: var(--muted); }
   .accordion-item.open .chev { transform: rotate(180deg); }
-  .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; padding: 0 14px; }
-  .accordion-item.open .accordion-body { max-height: 300px; padding: 0 14px 14px; }
+  .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; padding: 0 14px; }
+  .accordion-item.open .accordion-body { max-height: 480px; padding: 4px 14px 16px; }
   .accordion-icon { margin-inline-end: 8px; }
+  .field-row { margin-bottom: 12px; }
+  .field-row:last-child { margin-bottom: 0; }
+  .field-row label { display: block; font-size: 0.72rem; color: var(--muted); margin-bottom: 5px; }
+  .field-row select, .field-row input[type=text] { width: 100%; }
+  .field-row.split { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .adv-toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--gray-line); }
+  .adv-toggle-row:last-child { border-bottom: none; }
+  .adv-toggle-row .t-label { font-size: 0.78rem; }
+  .adv-toggle-row .t-desc { font-size: 0.65rem; color: var(--muted); }
+  .node-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--gray-line); font-size: 0.78rem; }
+  .node-row:last-child { border-bottom: none; }
+  .node-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--good); flex-shrink: 0; }
+  .node-row .node-name { flex: 1; }
+  .node-row .node-lat { color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; }
+  .rule-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+  .rule-row { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); border: 1px solid var(--gray-line); border-radius: 8px; padding: 7px 10px; font-size: 0.75rem; }
+  .rule-row select { flex-shrink: 0; padding: 4px 6px; font-size: 0.7rem; }
+  .rule-row .rule-domain { flex: 1; font-family: 'JetBrains Mono', monospace; }
+  .rule-row .rule-del { background: none; border: none; box-shadow: none; width: auto; color: var(--danger); cursor: pointer; padding: 0 4px; }
 
   .port-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
   .port-chip { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.03); border: 1px solid var(--gray-line); border-radius: 9px; padding: 8px 10px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; }
@@ -642,32 +661,184 @@
       toast('Backup downloaded');
     });
 
-    // ---------------- advanced accordion ----------------
+    // ---------------- ADVANCED TAB (real controls, still local-only state) ----------------
+    let routingRules = [
+      { domain: 'netflix.com', mode: 'Direct' },
+      { domain: 'instagram.com', mode: 'Proxy' },
+    ];
+    let nodes = [
+      { name: 'hackfires-panel (primary)', region: 'Frankfurt', ms: 42 },
+      { name: 'hackfires-panel-2', region: 'Singapore', ms: 118 },
+    ];
+
+    function dnsSectionHtml() {
+      return `
+        <div class="field-row">
+          <label>DNS resolver</label>
+          <select data-adv="dnsResolver">
+            <option>Cloudflare DoH (1.1.1.1)</option>
+            <option>Google DoH (8.8.8.8)</option>
+            <option>NextDNS</option>
+            <option>System default</option>
+          </select>
+        </div>
+        <div class="adv-toggle-row">
+          <div><div class="t-label">Fake DNS</div><div class="t-desc">Speeds up domain resolution over the tunnel</div></div>
+          <button class="toggle on" data-adv-toggle="fakeDns"></button>
+        </div>
+        <div class="adv-toggle-row">
+          <div><div class="t-label">Domestic bypass</div><div class="t-desc">Skip proxy for local IPs/domains</div></div>
+          <button class="toggle on" data-adv-toggle="domesticBypass"></button>
+        </div>
+      `;
+    }
+
+    function proxySectionHtml() {
+      return `
+        <div class="field-row split">
+          <div><label>Relay type</label>
+            <select data-adv="relayType"><option>None</option><option>SOCKS5</option><option>HTTP</option><option>TURN</option></select>
+          </div>
+          <div><label>Relay address</label><input type="text" placeholder="127.0.0.1:1080" data-adv="relayAddr" /></div>
+        </div>
+        <div class="adv-toggle-row">
+          <div><div class="t-label">WARP as secondary hop</div><div class="t-desc">Route through Cloudflare WARP after this relay</div></div>
+          <button class="toggle" data-adv-toggle="warpHop"></button>
+        </div>
+      `;
+    }
+
+    function routingSectionHtml() {
+      const rows = routingRules.map((r, i) => `
+        <div class="rule-row">
+          <span class="rule-domain">${r.domain}</span>
+          <select data-rule-mode="${i}"><option ${r.mode==='Direct'?'selected':''}>Direct</option><option ${r.mode==='Proxy'?'selected':''}>Proxy</option><option ${r.mode==='Block'?'selected':''}>Block</option></select>
+          <button class="rule-del" data-rule-del="${i}">✕</button>
+        </div>
+      `).join('');
+      return `
+        <div class="rule-list" id="ruleList">${rows}</div>
+        <div class="field-row split">
+          <input type="text" id="newRuleDomain" placeholder="example.com" />
+          <button class="add-btn" id="addRuleBtn" style="width:100%">+ Add rule</button>
+        </div>
+      `;
+    }
+
+    function subscriptionSectionHtml() {
+      return `
+        <div class="field-row">
+          <label>Output format</label>
+          <select data-adv="subFormat">
+            <option>Clash / Mihomo (YAML)</option>
+            <option>sing-box (JSON)</option>
+            <option>Surge</option>
+            <option>Loon</option>
+            <option>Raw Base64</option>
+          </select>
+        </div>
+        <div class="field-row">
+          <label>Auto-refresh interval</label>
+          <select data-adv="subRefresh"><option>Every 6 hours</option><option>Every 12 hours</option><option selected>Every 24 hours</option><option>Manual only</option></select>
+        </div>
+      `;
+    }
+
+    function protocolSectionHtml() {
+      return `
+        <div class="field-row">
+          <label>Default protocol</label>
+          <select data-adv="defaultProto"><option>VLESS</option><option>Trojan</option><option>Shadowsocks</option></select>
+        </div>
+        <div class="field-row">
+          <label>Transport</label>
+          <select data-adv="transport"><option>WebSocket</option><option>gRPC</option><option>XHTTP</option></select>
+        </div>
+        <div class="adv-toggle-row">
+          <div><div class="t-label">ECH (Encrypted Client Hello)</div><div class="t-desc">Hide SNI from DPI</div></div>
+          <button class="toggle on" data-adv-toggle="protoEch"></button>
+        </div>
+      `;
+    }
+
+    function nodesSectionHtml() {
+      const rows = nodes.map(n => `
+        <div class="node-row"><span class="node-dot"></span><span class="node-name">${n.name} · ${n.region}</span><span class="node-lat">${n.ms}ms</span></div>
+      `).join('');
+      return `
+        <div style="margin-bottom:10px">${rows}</div>
+        <div class="field-row split">
+          <input type="text" id="newNodeUrl" placeholder="https://node2.workers.dev" />
+          <button class="add-btn" id="addNodeBtn" style="width:100%">+ Register node</button>
+        </div>
+      `;
+    }
+
     const advancedSections = [
-      { icon: '🌐', title: 'DNS & Network', body: 'DNS-over-HTTPS resolver, fake-DNS, and domestic bypass rules live here once the routing API is wired up.' },
-      { icon: '🔗', title: 'Proxy & Relay', body: 'Chain this panel through SOCKS5, HTTP, or TURN relays, and configure WARP as a secondary hop.' },
-      { icon: '⚙️', title: 'Custom Routing', body: 'Per-domain or per-app routing rules — direct vs proxied — once rule storage exists.' },
-      { icon: '📝', title: 'Subscription', body: 'Format subscription output for Clash, sing-box, Surge, or Loon, and set refresh intervals.' },
-      { icon: '⚡', title: 'Protocol', body: 'Switch default protocol between VLESS, Trojan, and Shadowsocks, and tune transport (WS/gRPC/XHTTP).' },
-      { icon: '🛰️', title: 'Other nodes', body: 'Register additional Worker deployments here to load-balance across multiple edge nodes.' },
+      { icon: '🌐', title: 'DNS & Network', render: dnsSectionHtml },
+      { icon: '🔗', title: 'Proxy & Relay', render: proxySectionHtml },
+      { icon: '⚙️', title: 'Custom Routing', render: routingSectionHtml },
+      { icon: '📝', title: 'Subscription', render: subscriptionSectionHtml },
+      { icon: '⚡', title: 'Protocol', render: protocolSectionHtml },
+      { icon: '🛰️', title: 'Other nodes', render: nodesSectionHtml },
     ];
     const accRoot = document.getElementById('accordionRoot');
-    advancedSections.forEach((s, i) => {
-      const item = document.createElement('div');
-      item.className = 'accordion-item';
-      item.innerHTML = `
-        <div class="accordion-head" data-acc="${i}">
-          <span><span class="accordion-icon">${s.icon}</span>${s.title}</span>
-          <span class="chev">⌄</span>
-        </div>
-        <div class="accordion-body"><p class="setting-desc" style="margin:10px 0">${s.body}</p></div>
-      `;
-      accRoot.appendChild(item);
-    });
+
+    function renderAdvanced() {
+      const openIndex = [...accRoot.querySelectorAll('.accordion-item')].findIndex(el => el.classList.contains('open'));
+      accRoot.innerHTML = '';
+      advancedSections.forEach((s, i) => {
+        const item = document.createElement('div');
+        item.className = 'accordion-item' + (i === openIndex ? ' open' : '');
+        item.innerHTML = `
+          <div class="accordion-head" data-acc="${i}">
+            <span><span class="accordion-icon">${s.icon}</span>${s.title}</span>
+            <span class="chev">⌄</span>
+          </div>
+          <div class="accordion-body">${s.render()}</div>
+        `;
+        accRoot.appendChild(item);
+      });
+    }
+    renderAdvanced();
+
     accRoot.addEventListener('click', (e) => {
       const head = e.target.closest('.accordion-head');
-      if (!head) return;
-      head.closest('.accordion-item').classList.toggle('open');
+      if (head) { head.closest('.accordion-item').classList.toggle('open'); return; }
+
+      if (e.target.dataset.advToggle !== undefined) { e.target.classList.toggle('on'); toast('Setting updated'); return; }
+
+      if (e.target.id === 'addRuleBtn') {
+        const domain = document.getElementById('newRuleDomain').value.trim();
+        if (!domain) { toast('Enter a domain first'); return; }
+        routingRules.push({ domain, mode: 'Proxy' });
+        renderAdvanced();
+        document.querySelectorAll('.accordion-item')[2].classList.add('open');
+        toast('Rule added');
+        return;
+      }
+      if (e.target.dataset.ruleDel !== undefined) {
+        routingRules.splice(+e.target.dataset.ruleDel, 1);
+        renderAdvanced();
+        document.querySelectorAll('.accordion-item')[2].classList.add('open');
+        toast('Rule removed');
+        return;
+      }
+      if (e.target.id === 'addNodeBtn') {
+        const url = document.getElementById('newNodeUrl').value.trim();
+        if (!url) { toast('Enter a worker URL first'); return; }
+        nodes.push({ name: url.replace(/^https?:\/\//,''), region: 'Auto', ms: Math.floor(30 + Math.random()*150) });
+        renderAdvanced();
+        document.querySelectorAll('.accordion-item')[5].classList.add('open');
+        toast('Node registered');
+        return;
+      }
+    });
+    accRoot.addEventListener('change', (e) => {
+      if (e.target.dataset.ruleMode !== undefined) {
+        routingRules[+e.target.dataset.ruleMode].mode = e.target.value;
+        toast('Rule updated');
+      }
     });
 
     // ---------------- settings ----------------
