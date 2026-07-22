@@ -8,5 +8,16 @@
     // don't commit your real UUID here. Generate one with:
     // node -e "console.log(crypto.randomUUID())"
     "USER_ID": "00000000-0000-0000-0000-000000000000"
-  }
+  },
+  "kv_namespaces": [
+    {
+      // Create with: wrangler kv:namespace create USERS_KV
+      // Paste the "id" it prints into the line below.
+      "binding": "USERS_KV",
+      "id": "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
+    }
+  ]
+  // MASTER_KEY is a secret, not a var — set it with:
+  //   wrangler secret put MASTER_KEY
+  // This is the real password the dashboard login screen checks against.
 }
