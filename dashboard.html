@@ -228,6 +228,7 @@
     position: fixed; bottom: 22px; right: 22px; width: 52px; height: 52px; border-radius: 16px;
     background: linear-gradient(135deg, var(--sky), var(--sky-deep)); color: #04121c; font-size: 1.3rem;
     border: none; cursor: pointer; box-shadow: 0 8px 24px rgba(56,189,248,0.4); z-index: 25;
+    display: none;
   }
   body[dir="rtl"] .add-fab { right: auto; left: 22px; }
 
@@ -258,7 +259,7 @@
   <div id="loginScreen">
     <div class="login-shell">
       <div class="login-ring"><div class="core">🔥</div></div>
-      <div class="login-title" data-i18n="gatewayTitle">HackFire's Gateway</div>
+      <div class="login-title" data-i18n="gatewayTitle">HackFire's Panel</div>
       <div class="login-sub" data-i18n="gatewaySub">Enter your master key to continue</div>
       <div class="login-panel">
         <div class="kv-row">
@@ -422,7 +423,7 @@
     // ---------------- i18n ----------------
     const dict = {
       en: {
-        gatewayTitle: "HackFire's Gateway", gatewaySub: 'Enter your master key to continue',
+        gatewayTitle: "HackFire's Panel", gatewaySub: 'Enter your master key to continue',
         secureConn: 'Encrypted session', systemActive: 'online', masterKeyPh: 'Master key', signIn: 'Unlock panel',
         brandName: "HackFire's Panel", subOverview: 'Live overview of your gateway',
         active: 'Active users', totalUsers: 'Total users', disabled: 'Disabled', expired: 'Expired soon',
@@ -438,7 +439,7 @@
         addUserTitle: 'Add user', label: 'Label', protocol: 'Protocol', quotaGb: 'Quota (GB)', expiresDays: 'Expires in (days)', cancel: 'Cancel',
       },
       fa: {
-        gatewayTitle: 'دروازه HackFire', gatewaySub: 'کلید اصلی را وارد کنید',
+        gatewayTitle: 'پنل HackFire', gatewaySub: 'کلید اصلی را وارد کنید',
         secureConn: 'نشست رمزنگاری‌شده', systemActive: 'آنلاین', masterKeyPh: 'کلید اصلی', signIn: 'باز کردن پنل',
         brandName: 'پنل HackFire', subOverview: 'نمای زنده دروازه شما',
         active: 'کاربران فعال', totalUsers: 'کل کاربران', disabled: 'غیرفعال', expired: 'در حال انقضا',
@@ -467,7 +468,13 @@
     // ---------------- login ----------------
     const loginScreen = document.getElementById('loginScreen');
     const app = document.getElementById('app');
-    function unlock() { loginScreen.style.display = 'none'; app.style.display = 'block'; sessionStorage.setItem('hf_unlocked','1'); }
+    const addFab = document.getElementById('addFab');
+    function unlock() {
+      loginScreen.style.display = 'none';
+      app.style.display = 'block';
+      addFab.style.display = 'flex';
+      sessionStorage.setItem('hf_unlocked','1');
+    }
     if (sessionStorage.getItem('hf_unlocked') === '1') unlock();
     document.getElementById('signInBtn').addEventListener('click', () => {
       const v = document.getElementById('masterKey').value.trim();
@@ -480,7 +487,9 @@
     });
     document.getElementById('logoutBtn').addEventListener('click', () => {
       sessionStorage.removeItem('hf_unlocked');
-      app.style.display = 'none'; loginScreen.style.display = 'flex';
+      app.style.display = 'none';
+      addFab.style.display = 'none';
+      loginScreen.style.display = 'flex';
     });
 
     // ---------------- toast ----------------
@@ -491,7 +500,6 @@
     }
 
     // ---------------- sidebar nav ----------------
-    const subLabels = { overview: 'subOverview', users: null, advanced: null, settings: null };
     function switchView(name) {
       document.querySelectorAll('.rail-item[data-view]').forEach(r => r.classList.toggle('active', r.dataset.view === name));
       document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + name));
@@ -603,7 +611,7 @@
 
     // ---------------- add user ----------------
     const overlay = document.getElementById('overlay');
-    document.getElementById('addFab').addEventListener('click', () => overlay.classList.add('open'));
+    addFab.addEventListener('click', () => overlay.classList.add('open'));
     document.getElementById('qaAddUser').addEventListener('click', () => overlay.classList.add('open'));
     document.getElementById('cancelAdd').addEventListener('click', () => overlay.classList.remove('open'));
     overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
